@@ -12,7 +12,6 @@ module.exports = (app, router) => {
    //       pagenum: z.string()
    //    })
    // });
-
    router.get('/api/project/list', projectController.getList.bind(projectController))
    router.post('/api/post/project/list', projectController.getListByPost.bind(projectController))
 }

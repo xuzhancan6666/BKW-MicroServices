@@ -14,12 +14,12 @@ module.exports = (app) => {
       const {headers} = ctx.request
       // sSign : 签名
       // s_t: 时间
-      const {s_sign, sSign, s_t: st} = headers;
+      const {s_sign: sSign, s_t: st} = headers;
       // 密钥 前后端共有 (对称加密)
       const signKey = 'locking';
       // 加密 密钥+时间
       const signature = md5(`${signKey}_${st}`)
-      app.logger.info(`${method}-${path} signature: ${signature}`)
+      app.logger.info(`${method}-${path} signature: ${signature}`, sSign)
 
       // 用户有签名。 用户有传输时间。
       // 用户签名 和 上面生成的 signature 相等

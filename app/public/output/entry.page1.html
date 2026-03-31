@@ -29,14 +29,14 @@
    }
 
    const handleClickPost = () => {
-      const signKey = 'locking1'
+      const signKey = 'locking'
       const st = Date.now()
       const signature = md5(`${signKey}_${st}`)
 
       axios.request({
          url: '/api/post/project/list',
          method: 'post',
-         data: {page: 1, pagenum: 2},
+         data: {page: 1, pagenum: '1'},
          headers: {
             s_t: st,
             s_sign: md5(`${signKey}_${st}`)

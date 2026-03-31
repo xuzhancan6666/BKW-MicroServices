@@ -31,6 +31,6 @@ module.exports = (app) => {
    app.use(app.$middleware.apiSignVerify)
 
    // // 参数类型校验
-   // app.use(app.$middleware.apiParamsVerify)
+   app.use(app.$middleware.apiParamsVerify)
 
 }
