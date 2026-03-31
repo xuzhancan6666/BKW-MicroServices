@@ -9,7 +9,7 @@ module.exports = (app) => {
    // nunjucks 会给 ctx 上下文 进行改造。添加一个 redner
    const koaNunjucks = require('koa-nunjucks-2')
    app.use(koaNunjucks({
-      ext: 'html',
+      ext: 'tpl',
       path: path.resolve(process.cwd(), './app/public'),
       nunjucksConfig: {
          noCache: true,
@@ -31,6 +31,6 @@ module.exports = (app) => {
    app.use(app.$middleware.apiSignVerify)
 
    // // 参数类型校验
-   app.use(app.$middleware.apiParamsVerify)
+   app.use(app.$middleware.apiParamsValidate)
 
 }
