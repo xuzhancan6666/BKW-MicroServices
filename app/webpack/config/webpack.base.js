@@ -37,6 +37,8 @@ module.exports = {
    // },
    // 优化加载入口配置写法
    entry: entrysAll,
+   // source-map
+   devtool: 'eval-cheap-module-source-map',
    // 模块解析. 更具文件类型匹配loader
    module: {
       rules: [{
@@ -75,12 +77,12 @@ module.exports = {
       }]
    },
    // 产物输出目标位置。 因为开发和生产不一致。需要根据环境 进行分别配置
-   output: {
-      filename: 'js/[name]_[chunkhash:8].bundle.js',
-      path: path.join(process.cwd(), './app/public/dist/prod'),
-      publicPath: '/dist/prod',
-      crossOriginLoading: 'anonymous'
-   },
+   // output: {
+   //    filename: 'js/[name]_[chunkhash:8].bundle.js',
+   //    path: path.join(process.cwd(), './app/public/dist/prod'),
+   //    publicPath: '/dist/prod',
+   //    crossOriginLoading: 'anonymous'
+   // },
    // 配置模块解析的具体行文。定义webpack 在打包时。如何找到并解析具体模块路径
    // alias用于我们开发便捷性。通过import xxx from. $page/xxx/xxx
    resolve: {

@@ -7,7 +7,7 @@
    import { ref } from 'vue'
    import util from '$common/utils';
    const content = ref('')
-   console.log('page1....', content.value)
+   console.log('page1....77777', content.value)
    util()
 </script>
 <style lang="less" scoped>
