@@ -6,11 +6,13 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import pinia from "$store/index.js";
 import { createRouter, createWebHashHistory } from 'vue-router'
 import '$pages/assets/custom.css'
+import message from '$common/message.js'
 /*
    pageComponent: 入口组件
    :route 路由配置
    :libs: 第三方包
 */
+
 export default (pageComponents, { routes, libs } = {}) => {
    const app = createApp(pageComponents);
    // 应用 element
@@ -33,6 +35,7 @@ export default (pageComponents, { routes, libs } = {}) => {
    })
 
    app.use(router)
+   app.config.globalProperties.$message = message
 
    router.isReady().then(() => {
       app.mount('#root')

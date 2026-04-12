@@ -58,7 +58,7 @@ module.exports = {
             loader: 'babel-loader'
          }
       },{
-        test: /\.(png|jpe?g|gif|svg)$/i,
+        test: /\.(png|jpe?g|gif|svg|webp)$/i,
         use: [
           {
             loader: 'url-loader',          // 推荐使用 url-loader，它内部集成了 file-loader
@@ -93,7 +93,7 @@ module.exports = {
          $pages: path.resolve(process.cwd(), './app/pages'),
          $boot: path.resolve(process.cwd(), './app/pages/boot'),
          $common: path.resolve(process.cwd(), './app/pages/common'),
-         $widget: path.resolve(process.cwd(), './app/pages/widget'),
+         $widgets: path.resolve(process.cwd(), './app/pages/widgets'),
          $store: path.resolve(process.cwd(), './app/pages/store')
       }
    },

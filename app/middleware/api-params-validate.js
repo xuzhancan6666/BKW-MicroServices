@@ -6,6 +6,7 @@ module.exports = (app) => {
     ctx.validate = function(schema, data, options = {}) {
       try {
         app.logger.info('--[validate schema]--data:', data, schema.parse(data))
+        console.log('data', ctx.request, data)
         return schema.parse(data);
       } catch (error) {
          const err = new Error('参数验证失败');
@@ -37,16 +38,17 @@ module.exports = (app) => {
     if(Array.isArray(currentSchemaList) && currentSchemaList.length > 0) {
       for(let i = 0; i < currentSchemaList.length; i++) {
          const item = currentSchemaList[i]
+         const schema = z.object(item.schema)
 
          switch(item.type) {
             case 'data':
-               ctx.validateBody(item.schema)
+               ctx.validateBody(schema)
                break
             case 'query':
-               ctx.validateQuery(item.schema)
+               ctx.validateQuery(schema)
                break
             case 'params':
-               ctx.validateParams(item.schema)
+               ctx.validateParams(schema)
                break
          }
       }

@@ -1,5 +1,7 @@
 
 module.exports = (app, router) => {
    const { project: projectController } = app.controller
-   router.post('/api/post/project/list', projectController.getListByPost.bind(projectController))
+
+   router.get('/api/project/list', projectController.getList.bind(projectController))
+   router.post('/api/project/list/project', projectController.getProject.bind(projectController))
 }
