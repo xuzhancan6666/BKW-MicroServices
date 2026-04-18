@@ -34,82 +34,79 @@ import { useRoute, useRouter } from 'vue-router';
 
 const activeKey = ref('')
 const menu = ref([])
-
 const menuStore = useMenuStore()
 const router = useRouter()
 const route = useRoute()
+const menu_key = ref(route.query.menu_key)
+const sider_menu_key = ref(route.query.sider_menu_key)
 
 // 1.我没需要 siderMenu 来作为我们view 页面的 menu
 // 2.url表达：siderMenu --> sub_menu_key 。 headerMenu-->menu_key
-// 为了刷新界面。headerview 中的 menu 对应 activeKey 不会混淆导致没有选中
-// 设置 activeKey。 设置 Menu
 
-// 1.点击 header。-> 初始化 第一个 menu 展开 展示页面。
-// 点击 menu 对应展示 页面。
-// 刷新路径 重新请求。 初始化menu。
-
-watch(() => route.query.menu_key, () => {
-   console.log('route.query.menu_key')
-
-   setActiveKey()
-});
-
-watch(() => route.query.sider_menu_key, () => {
-   console.log('route.query.sider_menu_key')
-
-   setActiveKey()
-});
-
-// 有一种情况。异步请求慢。需要监听我们menuList数据变化。
-// 如果请求成功回来。那么监听数据。
-// 数据返回。触发。初始化 siderMenu。
+// 判断 menu 是否准备好。
+const menuAlready = computed(() => {
+   return Array.isArray(menu.value) && menu.value.length > 0
+})
+// 特殊 情况。 刷新页面重新请求。
+// 页面已 mounted。 请求才返回。所以我们监听 menuList 变化. 再进行初始化
 watch(() => menuStore.menuList, () => {
-   setSiderMenu()
-
-   setActiveKey()
+   init()
 })
 
+// 初始化 menu
 onMounted(() => {
-   setActiveKey()
-   setSiderMenu()
+   init()
 })
 
-function setSiderMenu() {
+// 用 menuKey 获取真实 menu。
+function getRealMenuByKey(keyValue) {
    const menuItem = menuStore.findMenuItem({
       key: 'key',
-      value: route.query.menu_key
+      value: keyValue
    })
 
-   if(menuItem?.moduleType === 'sider' && menuItem?.siderConfig?.menu) {
-      menu.value = menuItem.siderConfig.menu || []
-   }
+   return menuItem
+}
 
-   if(menuItem?.defaultKey) {
-      onMenuSelect(menuItem.defaultKey)
+// 初始化function。 第一。初始化subMenu。 第二。打开对应的 menu 的 页面
+function init() {
+   // 初始化 menu
+   setMenu();
+
+   if(!menuAlready.value) return
+   // 此时 menu 已存在。
+   if(sider_menu_key.value) {
+      onMenuSelect(sider_menu_key.value)
+   } else {
+      const firstMenuItem = menuStore.findFirstMenuItem(menu.value)
+      onMenuSelect(firstMenuItem.key)
    }
 }
 
-function setActiveKey() {
-   const menuItem = menuStore.findMenuItem({
-      key: 'key',
-      value: route.query.sider_menu_key
-   })
+// 初始化 menu
+function setMenu() {
+   // 获取真实 menu。这里初始化我们的 sider 类型 Menu。
+   // 所以用到 menu_key
+   const menuItem = getRealMenuByKey(menu_key.value)
 
-   activeKey.value = menuItem?.key
+   // 存在menu 设置menu
+   if(menuItem?.siderConfig && menuItem?.siderConfig?.menu) {
+      menu.value = menuItem.siderConfig.menu
+   }
 }
 
-function onMenuSelect(menuKey) {
-   let menuItem = menuStore.findMenuItem({
-      key: 'key',
-      value: menuKey
-   })
+// siderMenu 点击事件。
+function onMenuSelect(key) {
+   handleMenuSelect(key)
+}
 
-   if(menuItem?.key === route.query.sider_menu_key) {
-      return
-   }
-
-   activeKey.value = menuItem?.key
-
+// 处理 Menu 选择事件
+function handleMenuSelect(menuKey) {
+   // 1.获取真实 Menu
+   const menuItem = getRealMenuByKey(menuKey)
+   // 设置 activeKey
+   activeKey.value = menuItem.key
+   // menu存在。 router push 对应页面。
    const { moduleType, key, customConfig, subMenu } = menuItem
    const menuPathMap = {
       iframe: '/iframe',
@@ -127,13 +124,11 @@ function onMenuSelect(menuKey) {
    })
 }
 
-function siderContent() {
-
-}
 </script>
 <style lang="less" scoped>
 .container {
    width: 100%;
+   height: 100%;
    display: flex;
 
    .sider {

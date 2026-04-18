@@ -75,4 +75,8 @@ onMounted(() => {
 })
 
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+:deep(.el-main) {
+   padding: 0;
+}
+</style>

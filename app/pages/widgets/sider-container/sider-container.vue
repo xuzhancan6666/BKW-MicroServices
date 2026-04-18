@@ -19,9 +19,7 @@
       border-right: 1px solid #E8E8E8;
    }
 
-   .main {
-      overflow: scroll
-   }
+   .main {}
 
    :deep(.el-menu) {
       border-right: 0;

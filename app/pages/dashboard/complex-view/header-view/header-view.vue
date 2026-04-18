@@ -103,14 +103,12 @@ function handleCommand(command) {
    const menu = projectList.value.find(pro => pro.key === command)
    const homePage = menu.homePage;
    const { origin, pathname } = window.location
-   console.log(`${location}${pathname}#${homePage}`)
 
    window.location.replace(`${origin}${pathname}#${homePage}`)
    window.location.reload()
 }
 
 onMounted(() => {
-   console.log('header............')
    setActiveKey()
 })
 </script>
