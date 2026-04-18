@@ -77,12 +77,8 @@ watch(() => route.query.menu_key, () => {
    setActiveKey()
 })
 
-watch(() => menuStore.menuList, () => {
+watch(() => menuStore.menuList, (val) => {
    setActiveKey()
-})
-
-watch(() => activeKey, () => {
-   onMenuSelect(activeKey.value)
 })
 
 function setActiveKey () {
@@ -114,6 +110,7 @@ function handleCommand(command) {
 }
 
 onMounted(() => {
+   console.log('header............')
    setActiveKey()
 })
 </script>

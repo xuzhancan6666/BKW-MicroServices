@@ -132,7 +132,6 @@ const webpackConfig = merge.smart(baseConfig, {
         },
         minify: [
           CssMinimizerPlugin.cssnanoMinify,
-          CssMinimizerPlugin.cssoMinify,
           CssMinimizerPlugin.cleanCssMinify
         ]
       })

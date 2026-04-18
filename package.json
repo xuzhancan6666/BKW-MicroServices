@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.24.0",
+    "@babel/runtime": "^7.29.2",
     "ajv": "^6.10.2",
     "axios": "^0.19.2",
     "echarts": "^5.5.0",

@@ -1,7 +1,7 @@
 module.exports = {
    name: '淘宝',
    desc: '淘宝电商系统',
-   homePage: '/todo?project_key=taobao&menu_key=overCupen',
+   homePage: '/todo?project_key=taobao&menu_key=product',
    menu: [
    {
       key: 'cupon',
@@ -38,14 +38,32 @@ module.exports = {
       moduleType: 'sider',
       siderConfig: {
          menu: [{
-            key: 'coupon',
+            key: 'operation1',
             name: '广告投放',
-            menuType: 'module',
-            moduleType: 'custom',
-            customConfig: {
-               path: '/todo'
-            }
-         }, {
+            menuType: 'group',
+            subMenu: [{
+               key: 'redbook',
+               name: '小红书',
+               menuType: 'module',
+               moduleType: 'custom',
+               customConfig: {
+                  path: '/todo'
+               }
+            }, {
+               key: 'douyin',
+               name: '抖音',
+               menuType: 'module',
+               moduleType: 'schema',
+            }, {
+               key: 'bilibili',
+               name: 'bilibili',
+               menuType: 'module',
+               moduleType: 'iframe',
+               iframeConfig: {
+                  path: 'http://www.baidu.com'
+               }
+            }]
+      }, {
             key: 'limit',
             name: '视频投放',
             menuType: 'module',

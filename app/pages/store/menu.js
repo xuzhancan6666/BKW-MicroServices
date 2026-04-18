@@ -18,7 +18,6 @@ const useMenuStore = defineStore('menu-store', () => {
    const findMenuItem = ({ key, value }, mList = menuList.value) => {
       for(let i = 0; i < mList.length; ++i) {
          const menu = mList[i]
-
          const { menuType, moduleType } = menu
 
          if(menu[key] === value) {
@@ -27,21 +26,34 @@ const useMenuStore = defineStore('menu-store', () => {
 
          if(menuType === 'group' && Array.isArray(menu.subMenu) && menu.subMenu.length > 0) {
             const mItem = findMenuItem({key, value}, menu.subMenu);
-            console.log('group.....', mItem)
-            if(mItem) {return mItem}
+            if(mItem) { return mItem }
          }
 
-         if(moduleType === 'sider' && menu.siderConfig && menu.siderConfig.menu) {
+         if(moduleType === 'sider' && menu?.siderConfig && menu?.siderConfig?.menu) {
+            console.log(9999)
             const mItem = findMenuItem({key, value}, menu.siderConfig.menu);
-            if(mItem) {return mItem}
+            if(mItem) { return mItem }
          }
       }
    }
 
+   /*
+      找出 mList --> menu 中第一个 Menu
+   */
+  const findFirstMenuItem = (mList = menuList.value) => {
+      if(!mList || !mList[0]) return
+      if(mList[0].menuType === 'group' && mList[0]?.subMenu) {
+         return findFirstMenuItem(mList[0].subMenu)
+      }
+
+      return mList[0]
+  }
+
    return {
       menuList,
       setMenuList,
-      findMenuItem
+      findMenuItem,
+      findFirstMenuItem
    }
 })
 

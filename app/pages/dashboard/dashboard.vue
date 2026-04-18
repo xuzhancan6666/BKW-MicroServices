@@ -8,7 +8,6 @@
             <router-view></router-view>
          </template>
       </HeaderView>
-
    </el-config-provider>
 </template>
 <script setup>
@@ -52,7 +51,7 @@ async function getProject() {
 
 function menuSelect (menuItem) {
    const { moduleType, key, customConfig, subMenu } = menuItem
-   console.log('12312312,', key)
+
    if(key === route.query.menu_key) return;
 
    const menuPathMap = {
@@ -60,7 +59,6 @@ function menuSelect (menuItem) {
       iframe: '/iframe',
       schema: '/schema',
       custom: customConfig?.path,
-      // group: subMenu
    }
    router.push({
       path: menuPathMap[moduleType],
