@@ -133,7 +133,23 @@ module.exports = {
             customConfig: {
                path: '/todo'
             }
-         }]
+         }, {
+            key: 'agent',
+            name: 'Agent',
+            menuType: 'module',
+            moduleType: 'custom',
+            customConfig: {
+               path: '/agent'
+            }
+         }, {
+            key: 'Editor',
+            name: 'Editor',
+            menuType: 'module',
+            moduleType: 'custom',
+            customConfig: {
+               path: '/editor'
+            }
+         }, ]
       }
    },]
 }

@@ -40,6 +40,16 @@ routes.push({
       {
          path: 'todo',
          component: () => import('../todo-view/todo.vue')
+      },
+      // my first agent
+      {
+         path: 'agent',
+         component: () => import('../complex-view/agent-view/agent-view.vue')
+      },
+      // Editor
+      {
+         path: 'editor',
+         component: () => import('../complex-view/editor-view/editor-view.vue')
       }
    ]
 })

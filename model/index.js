@@ -43,7 +43,6 @@ module.exports = (app) => {
    const modelList = []
    const modelPath = path.resolve(process.cwd(), `.${sep}model`);
    const filePathList = glob.sync(`${modelPath}${sep}**${sep}*.js`);
-
    // filePathList [
    //    '/Applications/Can/work/temp1/vueTemp001/model/business/model.js',
    //    '/Applications/Can/work/temp1/vueTemp001/model/business/project/pdd.js',
@@ -65,7 +64,7 @@ module.exports = (app) => {
    const typeSet = new Set()
    filePathList.forEach((filePath, index) => {
       const subFilePath = filePath.slice(filePath.indexOf('/model/') + 7, filePath.length)
-      const arr = subFilePath.split(`${sep}`);
+      const arr = subFilePath.indexOf(`${sep}`) > -1 ? subFilePath.split(`${sep}`) : subFilePath.split('/');
       // 分类。business / course
       const pathType = arr[0]
       const isModel = arr[arr.length - 1] === 'model.js'
@@ -74,7 +73,6 @@ module.exports = (app) => {
       if(pathType.indexOf('.js') > -1) {
          return
       }
-
       // 如果没有该类型。并且 type！== xxx.js set 存下新对象。modelList 存下新对象。
       if(!typeSet.has(pathType)) {
          typeSet.add(pathType)
@@ -93,6 +91,7 @@ module.exports = (app) => {
 
    modelList.forEach((item) => {
       const { model, project } = item
+
       for(let key in project) {
          project[key] = projectExtendModel(model, project[key])
       }

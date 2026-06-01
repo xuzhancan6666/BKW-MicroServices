@@ -18,7 +18,6 @@ module.exports = (app) => {
 
             return c
          }, [])
-         console.log('ress.......', res)
          return res || []
       }
 
