@@ -150,6 +150,7 @@ const buildTableData = (listData) => {
 
 // table行数据操作
 const opertaionHandler = ({btnConfig, rowData}) => {
+   console.log(9999, btnConfig, rowData)
    emits('rowOperation', { btnConfig, rowData })
 }
 

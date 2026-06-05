@@ -163,6 +163,97 @@ export default [
     </nav>`,
   },
 
+  {
+    id: 'navbar-bank',
+    label: '导航栏 银行风格',
+    category: '导航',
+    componentName: 'CQNavBank',
+    content: `<header style="font-family:'Microsoft YaHei','PingFang SC',sans-serif;">
+      <style>
+        .nav-dropdown { position:relative; height:100%; display:flex; align-items:center; }
+        .nav-dropdown:hover .nav-sub { display:block; }
+        .nav-sub { display:none; position:absolute; top:100%; left:0; background:#fff; min-width:160px; box-shadow:0 4px 16px rgba(0,0,0,0.12); border-radius:0 0 6px 6px; padding:6px 0; z-index:100; white-space:nowrap; }
+        .nav-sub a { display:block; padding:10px 20px; color:#333; text-decoration:none; font-size:13px; transition:background 0.2s; }
+        .nav-sub a:hover { background:#f8f8f8; color:#b5152b; }
+        .nav-sub a:first-child { border-top:2px solid #b5152b; }
+      </style>
+      <!-- 顶部工具条 -->
+      <div style="background:#b5152b;color:#fff;font-size:12px;padding:0 40px;height:32px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;gap:20px;">
+          <a style="color:rgba(255,255,255,0.85);text-decoration:none;" href="#">个人客户</a>
+          <a style="color:rgba(255,255,255,0.85);text-decoration:none;" href="#">私人客户</a>
+          <a style="color:rgba(255,255,255,0.85);text-decoration:none;" href="#">商务客户</a>
+          <a style="color:rgba(255,255,255,0.85);text-decoration:none;" href="#">企业客户</a>
+        </div>
+        <div style="display:flex;gap:16px;">
+          <a style="color:rgba(255,255,255,0.85);text-decoration:none;" href="#">网上银行</a>
+          <span style="color:rgba(255,255,255,0.4);">|</span>
+          <a style="color:rgba(255,255,255,0.85);text-decoration:none;" href="#">EN</a>
+        </div>
+      </div>
+      <!-- Logo + 搜索 -->
+      <div style="background:#fff;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee;">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <span style="font-size:24px;font-weight:800;color:#b5152b;letter-spacing:2px;">银行名称</span>
+          <span style="font-size:13px;color:#999;border-left:1px solid #ddd;padding-left:16px;">理财服务</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="display:flex;align-items:center;border:1px solid #ddd;border-radius:4px;overflow:hidden;">
+            <select style="border:none;outline:none;padding:0 8px;height:32px;font-size:13px;background:#f8f8f8;color:#333;">
+              <option>产品/服务</option>
+              <option>存款</option>
+              <option>投资</option>
+              <option>保险</option>
+            </select>
+            <input type="text" placeholder="搜寻" style="border:none;outline:none;padding:0 12px;height:32px;font-size:13px;width:140px;" />
+            <button style="border:none;background:#b5152b;color:#fff;padding:0 16px;height:32px;cursor:pointer;font-size:13px;">搜寻</button>
+          </div>
+          <a style="padding:6px 20px;border:1px solid #b5152b;color:#b5152b;border-radius:4px;text-decoration:none;font-size:13px;" href="#">登入</a>
+        </div>
+      </div>
+      <!-- 主导航 -->
+      <nav style="background:#fff;padding:0 40px;height:48px;display:flex;align-items:center;gap:0;box-shadow:0 2px 4px rgba(0,0,0,0.04);font-size:14px;">
+        <a style="color:#b5152b;text-decoration:none;font-weight:600;height:100%;display:flex;align-items:center;padding:0 16px;" href="#">主页</a>
+        <div class="nav-dropdown" style="padding:0 16px;">
+          <a style="color:#333;text-decoration:none;display:flex;align-items:center;gap:4px;height:100%;" href="#">存款服务 <span style="font-size:10px;">▾</span></a>
+          <div class="nav-sub">
+            <a href="#">活期存款</a>
+            <a href="#">定期存款</a>
+            <a href="#">外币储蓄</a>
+            <a href="#">人民币服务</a>
+          </div>
+        </div>
+        <div class="nav-dropdown" style="padding:0 16px;">
+          <a style="color:#333;text-decoration:none;display:flex;align-items:center;gap:4px;height:100%;" href="#">投资理财 <span style="font-size:10px;">▾</span></a>
+          <div class="nav-sub">
+            <a href="#">基金投资</a>
+            <a href="#">债券投资</a>
+            <a href="#">股票投资</a>
+            <a href="#">结构性产品</a>
+          </div>
+        </div>
+        <a style="color:#333;text-decoration:none;height:100%;display:flex;align-items:center;padding:0 16px;" href="#">信用卡</a>
+        <div class="nav-dropdown" style="padding:0 16px;">
+          <a style="color:#333;text-decoration:none;display:flex;align-items:center;gap:4px;height:100%;" href="#">按揭贷款 <span style="font-size:10px;">▾</span></a>
+          <div class="nav-sub">
+            <a href="#">安老按揭</a>
+            <a href="#">居屋按揭</a>
+            <a href="#">转按计划</a>
+          </div>
+        </div>
+        <div class="nav-dropdown" style="padding:0 16px;">
+          <a style="color:#333;text-decoration:none;display:flex;align-items:center;gap:4px;height:100%;" href="#">保险服务 <span style="font-size:10px;">▾</span></a>
+          <div class="nav-sub">
+            <a href="#">人寿保险</a>
+            <a href="#">医疗保险</a>
+            <a href="#">退休计划</a>
+          </div>
+        </div>
+        <a style="color:#333;text-decoration:none;height:100%;display:flex;align-items:center;padding:0 16px;" href="#">关于我们</a>
+      </nav>
+    </header>`,
+  },
+
   // ==================== 卡片 ====================
   {
     id: 'card-product',
@@ -947,6 +1038,44 @@ export default [
   },
 
   // ==================== 炫酷 Logo ====================
+  // ==================== 媒体 ====================
+  {
+    id: 'media-image',
+    label: '图片',
+    category: '媒体',
+    componentName: 'CQImage',
+    media: `<svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`,
+    content: {
+      type: 'image',
+      src: 'https://via.placeholder.com/800x400',
+      alt: '图片描述',
+      style: { width: '100%', display: 'block' },
+      traits: [
+        { type: 'text', name: 'src', label: '图片 URL' },
+        { type: 'text', name: 'alt', label: '描述' },
+      ],
+    },
+  },
+  {
+    id: 'media-pdf',
+    label: 'PDF 预览',
+    category: '媒体',
+    componentName: 'CQPDF',
+    media: `<svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 7.5c0 .83-.67 1.5-1.5 1.5H9v2H7.5V7H10c.83 0 1.5.67 1.5 1.5v1zm5 2c0 .83-.67 1.5-1.5 1.5h-2.5V7H15c.83 0 1.5.67 1.5 1.5v3zm4-3H19v1h1.5V11H19v2h-1.5V7h3v1.5zM9 9.5h1v-1H9v1zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm10 5.5h1v-3h-1v3z"/></svg>`,
+    content: `<iframe src="https://example.com/sample.pdf" style="width:100%;height:600px;border:1px solid #ddd;border-radius:8px;"></iframe>`,
+  },
+  {
+    id: 'media-video',
+    label: '视频',
+    category: '媒体',
+    componentName: 'CQVideo',
+    media: `<svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>`,
+    content: `<video controls style="width:100%;border-radius:8px;display:block;">
+      <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+      您的浏览器不支持视频播放
+    </video>`,
+  },
+
   {
     id: 'marquee-clients',
     label: '跑马灯客户',
@@ -959,7 +1088,7 @@ export default [
       </style>
       <p style="text-align:center;font-size:12px;color:#bbb;letter-spacing:3px;margin:0 0 32px;">TRUSTED BY INDUSTRY LEADERS</p>
       <div style="overflow:hidden;">
-        <div class="marq-track" style="display:flex;gap:64px;animation:marquee 24s linear infinite;width:fit-content;padding:0 20px;">
+        <div class="marq-track" sty le="display:flex;gap:64px;animation:marquee 24s linear infinite;width:fit-content;padding:0 20px;">
           ${['Google','Microsoft','Amazon','Meta','Apple','Netflix','Spotify','Twitter'].concat(['Google','Microsoft','Amazon','Meta','Apple','Netflix','Spotify','Twitter']).map(n => `
             <div style="font-size:20px;font-weight:700;color:#d0d0d0;white-space:nowrap;padding:12px 0;transition:color 0.3s;">${n}</div>
           `).join('')}

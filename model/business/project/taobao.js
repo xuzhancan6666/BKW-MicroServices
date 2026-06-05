@@ -23,7 +23,7 @@ module.exports = {
          menuType: 'module',
          moduleType: 'schema',
          schemaConfig: {
-            api: '/api/redbook/client',
+            api: '/api/page/content',
             schema: {}
          }
       }, {
@@ -51,42 +51,63 @@ module.exports = {
                menuType: 'module',
                moduleType: 'schema',
                schemaConfig: {
-                  api: '/api/redbook/client',
+                  api: '/api/page/content',
                   schema: {
                      type: 'objcet',
                      properties: {
-                        name: {
+                        title: {
                            type: 'string',
-                           label: '账号名称',
+                           label: '页面名称',
                            tableOptions: {}
                         },
-                        id: {
+                        description: {
                            type: 'string',
-                           label: '账号ID',
+                           label: '描述',
                            tableOptions: {}
                         },
-                        fansNum: {
-                           type: 'number',
-                           label: '粉丝数量',
+                        locale: {
+                           type: 'string',
+                           label: '语言',
                            tableOptions: {}
                         },
-                        money: {
+                        status: {
                            type: 'number',
-                           label: '投流金额',
+                           label: '状态',
+                           tableOptions: {}
+                        },
+                        mode: {
+                           type: 'number',
+                           label: '模式',
                            tableOptions: {}
                         }
                      },
                   },
                   tableConfig: {
                      headerButtons: [{
-                        label: '新增商品',
-                        eventKey: 'showComponent',
-                        type: 'primary'
+                        label: '新建页面',
+                        eventKey: 'go',
+                        type: 'primary',
+                        eventOptions: {
+                           url: '/sider/editor?project_key=taobao&menu_key=operation&sider_menu_key=Editor',
+                           query: {
+                              project_key: 'route::taobao',
+                              menu_key: 'route::operation',
+                              sider_menu_key: 'route::Editor'
+                           }
+                        }
                      }],
                      rowButtons: [{
-                        label: '修改',
-                        eventKey: 'showComponent',
-                        type: 'warning'
+                        label: '编辑',
+                        eventKey: 'go',
+                        type: 'warning',
+                        eventOptions: {
+                           url: '/sider/editor?project_key=taobao&menu_key=operation&sider_menu_key=Editor',
+                           query: {
+                              project_key: 'route::taobao',
+                              menu_key: 'route::operation',
+                              sider_menu_key: 'route::Editor'
+                           }
+                        }
                      }, {
                         label: '删除',
                         eventKey: 'remove',
@@ -105,7 +126,7 @@ module.exports = {
                menuType: 'module',
                moduleType: 'schema',
                schemaConfig: {
-                  api: '/api/redbook/client',
+                  api: '/api/page/content',
                   schema: {}
                }
             }, {

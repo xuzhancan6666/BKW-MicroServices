@@ -1,24 +1,25 @@
 module.exports = (app) => {
    const BaseService = require('./base-service')(app)
-
+   let fdata = [{
+      name: 'Credit Card Page',
+   }, {
+      name: 'News Page',
+   }, {
+      name: 'Holiday discount Page',
+   }]
+   
    return class SocialAppService extends BaseService{
+      constructor() {
+         super()
+         this.data = fdata
+      }
+
       getList() {
-         return [{
-            name: '阿祖',
-            id: 'az',
-            fansNum: '1000',
-            money: '1000',
-         }, {
-            name: '则玄',
-            id: 'zx',
-            fansNum: '12233',
-            money: '1222',
-         }, {
-            name: '弥渡',
-            id: 'asdd',
-            fansNum: '3231',
-            money: '112',
-         }]
+         return this.data
+      }
+
+      deleteList(id) {
+         this.data = this.data.filter(d => d.id !== id)
       }
    }
 }
