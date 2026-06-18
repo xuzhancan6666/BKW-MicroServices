@@ -1,6 +1,6 @@
 <template>
   <!-- 页面列表 -->
-  <div v-if="currentView === 'list'" class="page-list">
+  <div class="page-list">
     <el-card class="list-card">
       <el-row justify="space-between" align="middle" class="list-header">
         <span class="list-title">页面管理</span>
@@ -72,30 +72,15 @@
       <el-button type="primary" @click="confirmNew">创建</el-button>
     </template>
   </el-dialog>
-
-  <!-- 页面编辑器（v-if 销毁重建，避免 GrapesJS 在隐藏容器中初始化） -->
-  <div v-if="currentView === 'editor'" v-loading="editorLoading" class="editor-wrapper" element-loading-text="加载中...">
-    <page-builder
-      ref="pageBuilderRef"
-      :page-id="pageId"
-      :init-data="pageData"
-      :page-title="pageTitle"
-      :page-description="pageDescription"
-      :page-status="pageStatus"
-      :init-app-mode="initAppMode"
-      @save="handleSave"
-      @back="backToList"
-    />
-  </div>
 </template>
 
 <script setup>
-import { ref, reactive, nextTick, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import PageBuilder from '$widgets/page-builder/page-builder.vue'
 import curl from '$common/curl.js'
 
-const currentView = ref('list') // 'list' | 'editor'
+const router = useRouter()
 const loading = ref(false)
 const pageList = ref([])
 const total = ref(0)
@@ -107,18 +92,8 @@ const newDialogVisible = ref(false)
 const newForm = reactive({
   title: '',
   description: '',
-  mode: false,   // false=PC, true=APP
+  mode: false,
 })
-
-// 编辑器相关
-const pageId = ref(null)
-const pageData = ref(null)
-const pageTitle = ref('')
-const pageDescription = ref('')
-const pageStatus = ref(0)
-const initAppMode = ref(false)
-const pageBuilderRef = ref(null)
-const editorLoading = ref(false)
 
 onMounted(() => {
   fetchList()
@@ -147,16 +122,14 @@ function showNewDialog() {
   newDialogVisible.value = true
 }
 
-/** 确认新建——先入库，再以编辑模式打开 */
+/** 确认新建——先入库，再跳转到编辑器 */
 async function confirmNew() {
   if (!newForm.title.trim()) {
     ElMessage.warning('请输入页面名称')
     return
   }
   newDialogVisible.value = false
-  editorLoading.value = true
 
-  // 先插入数据库
   const res = await curl({
     method: 'post',
     url: '/api/page/content',
@@ -169,68 +142,24 @@ async function confirmNew() {
   })
   if (!res?.success || !res.data?.id) {
     ElMessage.error('创建失败')
-    editorLoading.value = false
     return
   }
 
-  const newId = res.data.id
-
-  // 加载完整数据（含 content_json）
-  const detail = await curl({
-    method: 'get',
-    url: `/api/page/content/${newId}`,
-  })
-
-  // 数据就绪后统一设置状态
-  pageId.value = newId
-  pageData.value = detail?.success && detail.data?.content_json
-    ? JSON.parse(detail.data.content_json)
-    : null
-  pageTitle.value = newForm.title.trim()
-  pageDescription.value = newForm.description.trim()
-  pageStatus.value = 0
-  initAppMode.value = newForm.mode
-
-  // 切换到编辑器视图（v-if 触发 page-builder 挂载）
-  currentView.value = 'editor'
-  nextTick(() => {
-    pageBuilderRef.value?.loadPageData(pageData.value)
-    editorLoading.value = false
+  router.push({
+    path: '/sider/page-editor',
+    query: { id: res.data.id },
   })
 }
 
-/** 编辑已有页面——加载数据后进入编辑器 */
+/** 编辑已有页面——跳转到编辑器 */
 async function editPage(row) {
-  editorLoading.value = true
-  pageId.value = row.id
-
-  // 先加载完整数据（含 content_json）
-  const res = await curl({
-    method: 'get',
-    url: `/api/page/content/${row.id}`,
-  })
-  if (!res?.success || !res.data) {
-    ElMessage.error('页面加载失败')
-    editorLoading.value = false
-    return
-  }
-
-  // 数据就绪后统一设置状态
-  pageData.value = res.data.content_json ? JSON.parse(res.data.content_json) : null
-  pageTitle.value = res.data.title || ''
-  pageDescription.value = res.data.description || ''
-  pageStatus.value = res.data.status !== undefined ? res.data.status : 0
-  initAppMode.value = res.data.mode === 1
-
-  // 切换到编辑器视图（v-if 触发 page-builder 挂载，此时容器可见）
-  currentView.value = 'editor'
-  nextTick(() => {
-    pageBuilderRef.value?.loadPageData(pageData.value)
-    editorLoading.value = false
+  router.push({
+    path: '/sider/page-editor',
+    query: { id: row.id },
   })
 }
 
-/** 删除页面——二次确认后调用 API */
+/** 删除页面 */
 async function deletePage(row) {
   try {
     await ElMessageBox.confirm(`确定删除「${row.title}」吗？`, '删除确认', {
@@ -239,7 +168,7 @@ async function deletePage(row) {
       type: 'warning',
     })
   } catch {
-    return // 用户取消
+    return
   }
 
   const res = await curl({
@@ -255,48 +184,6 @@ async function deletePage(row) {
   }
 }
 
-/** 编辑器保存回调 */
-const handleSave = async ({ pageId: id, title, description, status, mode, content_json, content_html }) => {
-  if (id) {
-    const res = await curl({
-      method: 'put',
-      url: `/api/page/content/${id}`,
-      data: { title, description, status, mode, content_json, content_html },
-    })
-    if (res?.success) {
-      pageTitle.value = title
-      pageDescription.value = description
-      pageStatus.value = status
-      initAppMode.value = mode === 1
-      ElMessage.success('保存成功')
-    } else {
-      ElMessage.error('保存失败')
-    }
-  } else {
-    const res = await curl({
-      method: 'post',
-      url: '/api/page/content',
-      data: { title, description, status, mode, content_json, content_html },
-    })
-    if (res?.success && res.data?.id) {
-      pageId.value = res.data.id
-      pageTitle.value = title
-      pageDescription.value = description
-      pageStatus.value = status
-      initAppMode.value = mode === 1
-      ElMessage.success('创建成功')
-    } else {
-      ElMessage.error('创建失败')
-    }
-  }
-}
-
-/** 编辑器返回按钮——回到列表 */
-function backToList() {
-  currentView.value = 'list'
-  fetchList()
-}
-
 /** 格式化时间 */
 function formatTime(dt) {
   if (!dt) return ''
@@ -304,7 +191,6 @@ function formatTime(dt) {
   const pad = (n) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
-
 </script>
 
 <style scoped>
@@ -325,8 +211,5 @@ function formatTime(dt) {
 }
 .pagination {
   margin-top: 16px;
-}
-.editor-wrapper {
-  height: 100%;
 }
 </style>

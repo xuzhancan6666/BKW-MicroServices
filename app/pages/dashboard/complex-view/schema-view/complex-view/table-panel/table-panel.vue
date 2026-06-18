@@ -112,7 +112,7 @@ function removeData ({ btnConfig, rowData }) {
 // 这是一个跳转 function
 function go({ btnConfig, rowData }) {
    router.push({
-      path: `/sider/editor`,
+      path: `/sider/page-editor`,
       query: {
          project_key: route?.query?.project_key,
          menu_key: 'operation',

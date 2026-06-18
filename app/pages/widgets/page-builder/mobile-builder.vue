@@ -3,7 +3,18 @@
     <!-- 顶部工具栏 -->
     <div class="editor-toolbar">
       <el-button @click="goBack">← 返回</el-button>
-      <span class="page-title">落地页编辑器</span>
+      <span class="page-title">APP页面编辑器</span>
+      <span class="toolbar-label">宽度：</span>
+      <el-input-number
+        v-model="deviceWidth"
+        :min="320"
+        :max="768"
+        :step="5"
+        size="small"
+        controls-position="right"
+        @change="onDeviceWidthChange"
+      />
+      <span class="toolbar-unit">px</span>
       <el-button @click="exportHtml">导出 HTML</el-button>
       <el-button @click="clearCanvas">清空画布</el-button>
       <el-button type="primary" @click="handleSave">保存</el-button>
@@ -21,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import grapesjs from 'grapesjs'
 import 'grapesjs-preset-webpage'
@@ -38,7 +49,6 @@ import { useRichTextModal } from './widgets/rich-text/index.js'
 const props = defineProps({
   pageId:    { type: [Number, String], default: null },
   initData:  { type: Object, default: null },
-  canvasMode:{ type: String, default: 'PC' },
   lang:      { type: String, default: 'zh_CN' }, // zh_CN | zh_HK | en_US
 })
 
@@ -48,8 +58,8 @@ const emit = defineEmits(['save', 'back'])
 
 const editorContainer = ref()
 let editor = null
-const MODE_MAP = { PC: 'desktop', APP: 'mobilePortrait' }
-const gjsDevice = computed(() => MODE_MAP[props.canvasMode] || MODE_MAP.PC)
+const CANVAS_MODE = 'APP'
+const deviceWidth = ref(375)
 
 /* ========== 富文本弹窗 ========== */
 
@@ -73,9 +83,9 @@ function initSetting() {
     i18n: getLocaleConfig(props.lang),
     plugins: ['gjs-preset-webpage'],
     pluginsOpts: { 'gjs-preset-webpage': {} },
-    device: gjsDevice.value,
-    showDevices: true,
-    styleManager: getStyleManager(props.lang),
+    device: 'mobilePortrait',
+    showDevices: false,
+    styleManager: getStyleManager(props.lang, 'rem'),
   }
 }
 
@@ -110,7 +120,7 @@ function registerLayoutComponent() {
 /** 注册 blocks.js 中定义的全部自定义组件块 */
 function registerCustomBlocks() {
   const keys = ['layout', 'blocks', 'media', 'basicComponents', 'textComponents']
-  const customBlocks = getBlocks(keys, props.canvasMode)
+  const customBlocks = getBlocks(keys, CANVAS_MODE)
   customBlocks.forEach(block => {
     editor.Blocks.add(block.id, {
       label: block.label,
@@ -119,6 +129,24 @@ function registerCustomBlocks() {
       ...(block.media ? { media: block.media } : {}),
     })
   })
+}
+
+/** 注册自定义 APP 设备（可调宽度） */
+function registerCustomDevice() {
+  const existing = editor.Devices.get('mobile-app')
+  if (existing) editor.Devices.remove('mobile-app')
+  editor.Devices.add({
+    id: 'mobile-app',
+    name: '手机',
+    width: `${deviceWidth.value}px`,
+  })
+  editor.setDevice('mobile-app')
+}
+
+function onDeviceWidthChange(val) {
+  if (!editor) return
+  const device = editor.Devices.get('mobile-app')
+  if (device) device.set('width', `${val}px`)
 }
 
 /** 为 image / layout 类型组件覆写属性面板（traits） */
@@ -191,9 +219,6 @@ function setupTraits() {
  */
 function loadInitialData() {
   editor.setDragMode('select')
-  if (gjsDevice.value !== 'desktop') {
-    editor.setDevice(gjsDevice.value)
-  }
 
   if (props.initData) {
     rteLoadData(editor, props.initData)
@@ -207,6 +232,7 @@ onMounted(() => {
   registerCustomBlocks()
   // 再初始化富文本（注册 editable-text 类型、命令、事件）
   rteInit(editor)
+  registerCustomDevice()
   setupTraits()
   loadInitialData()
 })
@@ -239,7 +265,7 @@ function handleSave() {
 
   emit('save', {
     pageId: props.pageId,
-    mode: props.canvasMode === 'APP' ? 1 : 0,
+    mode: 1,
     content_json: JSON.stringify(projectData),
     content_html: inlined,
   })
@@ -252,7 +278,6 @@ function exportHtml() {
   const html = editor.getHtml()
   const fullCss = editor.getCss()
   const inlined = inlineStyles(html, fullCss)
-  console.log('inlined', inlined)
   const fullHtml = [
     '<!DOCTYPE html>',
     '<html lang="zh-CN">',
@@ -310,8 +335,17 @@ onBeforeUnmount(() => {
   flex-shrink: 0;
 }
 .page-title {
-  flex: 1;
   font-weight: 600;
+}
+.toolbar-label {
+  font-size: 13px;
+  color: #666;
+  margin-left: 8px;
+}
+.toolbar-unit {
+  font-size: 13px;
+  color: #666;
+  margin-right: 8px;
 }
 .editor-container {
   flex: 1;

@@ -1,0 +1,102 @@
+[2026-06-16T09:34:42.902] [INFO] default - {"cause":{},"isOperational":true}
+[2026-06-16T09:34:42.903] [ERROR] default - [-- exception --]: OperationalError: template not found: dist/entry.none.tpl
+    at createTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:234:15)
+    ... 14 lines matching cause stack trace ...
+    at new Promise (<anonymous>) {
+  cause: Error: template not found: dist/entry.none.tpl
+      at createTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:234:15)
+      at next (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:260:7)
+      at handle (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:267:11)
+      at C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:276:9
+      at next (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:258:7)
+      at Object.asyncIter (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:263:3)
+      at Environment.getTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:259:9)
+      at Environment.render (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:295:10)
+      at Environment.promisified [as renderAsync] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\bluebird\js\release\promisify.js:223:16)
+      at _callee$ (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\koa-nunjucks-2\compiled.js:109:64)
+      at tryCatch (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:62:40)
+      at Generator.invoke [as _invoke] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:296:22)
+      at prototype.<computed> [as next] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:114:21)
+      at step (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\babel-runtime\helpers\asyncToGenerator.js:17:30)
+      at C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\babel-runtime\helpers\asyncToGenerator.js:35:14
+      at new Promise (<anonymous>),
+  isOperational: true
+}
+[2026-06-16T09:34:42.904] [INFO] default - [-- exception --]: undefined template not found: dist/entry.none.tpl undefined
+[2026-06-16T10:41:55.928] [INFO] default - GET-/api/page/content/list st: 1781577715875 signature: 061f2f1301a694d19f2f234636c6bc49 061f2f1301a694d19f2f234636c6bc49
+[2026-06-16T10:41:57.739] [INFO] default - GET-/api/page/content/20 st: 1781577717735 signature: 1629a61b5db1a7b2061022039e37107c 1629a61b5db1a7b2061022039e37107c
+[2026-06-16T10:41:57.898] [INFO] default - {"cause":{},"isOperational":true}
+[2026-06-16T10:41:57.898] [ERROR] default - [-- exception --]: OperationalError: template not found: dist/entry.none.tpl
+    at createTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:234:15)
+    ... 14 lines matching cause stack trace ...
+    at new Promise (<anonymous>) {
+  cause: Error: template not found: dist/entry.none.tpl
+      at createTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:234:15)
+      at next (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:260:7)
+      at handle (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:267:11)
+      at C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:276:9
+      at next (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:258:7)
+      at Object.asyncIter (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:263:3)
+      at Environment.getTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:259:9)
+      at Environment.render (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:295:10)
+      at Environment.promisified [as renderAsync] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\bluebird\js\release\promisify.js:223:16)
+      at _callee$ (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\koa-nunjucks-2\compiled.js:109:64)
+      at tryCatch (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:62:40)
+      at Generator.invoke [as _invoke] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:296:22)
+      at prototype.<computed> [as next] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:114:21)
+      at step (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\babel-runtime\helpers\asyncToGenerator.js:17:30)
+      at C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\babel-runtime\helpers\asyncToGenerator.js:35:14
+      at new Promise (<anonymous>),
+  isOperational: true
+}
+[2026-06-16T10:41:57.899] [INFO] default - [-- exception --]: undefined template not found: dist/entry.none.tpl undefined
+[2026-06-16T10:41:58.125] [INFO] default - {"cause":{},"isOperational":true}
+[2026-06-16T10:41:58.126] [ERROR] default - [-- exception --]: OperationalError: template not found: dist/entry.none.tpl
+    at createTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:234:15)
+    ... 14 lines matching cause stack trace ...
+    at new Promise (<anonymous>) {
+  cause: Error: template not found: dist/entry.none.tpl
+      at createTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:234:15)
+      at next (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:260:7)
+      at handle (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:267:11)
+      at C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:276:9
+      at next (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:258:7)
+      at Object.asyncIter (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:263:3)
+      at Environment.getTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:259:9)
+      at Environment.render (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:295:10)
+      at Environment.promisified [as renderAsync] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\bluebird\js\release\promisify.js:223:16)
+      at _callee$ (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\koa-nunjucks-2\compiled.js:109:64)
+      at tryCatch (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:62:40)
+      at Generator.invoke [as _invoke] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:296:22)
+      at prototype.<computed> [as next] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:114:21)
+      at step (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\babel-runtime\helpers\asyncToGenerator.js:17:30)
+      at C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\babel-runtime\helpers\asyncToGenerator.js:35:14
+      at new Promise (<anonymous>),
+  isOperational: true
+}
+[2026-06-16T10:41:58.127] [INFO] default - [-- exception --]: undefined template not found: dist/entry.none.tpl undefined
+[2026-06-16T10:41:58.241] [INFO] default - {"cause":{},"isOperational":true}
+[2026-06-16T10:41:58.241] [ERROR] default - [-- exception --]: OperationalError: template not found: dist/entry.none.tpl
+    at createTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:234:15)
+    ... 14 lines matching cause stack trace ...
+    at new Promise (<anonymous>) {
+  cause: Error: template not found: dist/entry.none.tpl
+      at createTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:234:15)
+      at next (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:260:7)
+      at handle (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:267:11)
+      at C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:276:9
+      at next (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:258:7)
+      at Object.asyncIter (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\lib.js:263:3)
+      at Environment.getTemplate (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:259:9)
+      at Environment.render (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\nunjucks\src\environment.js:295:10)
+      at Environment.promisified [as renderAsync] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\bluebird\js\release\promisify.js:223:16)
+      at _callee$ (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\koa-nunjucks-2\compiled.js:109:64)
+      at tryCatch (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:62:40)
+      at Generator.invoke [as _invoke] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:296:22)
+      at prototype.<computed> [as next] (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\regenerator-runtime\runtime.js:114:21)
+      at step (C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\babel-runtime\helpers\asyncToGenerator.js:17:30)
+      at C:\Users\zhancan.xu\Desktop\work\self\BKW-MicroServices\node_modules\babel-runtime\helpers\asyncToGenerator.js:35:14
+      at new Promise (<anonymous>),
+  isOperational: true
+}
+[2026-06-16T10:41:58.241] [INFO] default - [-- exception --]: undefined template not found: dist/entry.none.tpl undefined

@@ -50,6 +50,11 @@ routes.push({
       {
          path: 'editor',
          component: () => import('../complex-view/editor-view/editor-view.vue')
+      },
+      // Editor (standalone page)
+      {
+         path: 'page-editor',
+         component: () => import('../complex-view/editor-view/page-editor.vue')
       }
    ]
 })
