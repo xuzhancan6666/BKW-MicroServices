@@ -6,6 +6,7 @@
     </div>
     <page-builder
       v-else-if="initAppMode === 'PC'"
+      :key="pageId"
       ref="pageBuilderRef"
       :page-id="pageId"
       :init-data="pageData"
@@ -16,6 +17,7 @@
     />
     <mobile-builder
       v-else
+      :key="pageId"
       ref="mobileBuilderRef"
       :page-id="pageId"
       :init-data="pageData"
@@ -27,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import PageBuilder from '$widgets/page-builder/page-builder.vue'
@@ -47,8 +49,7 @@ const initAppMode = ref('PC')
 const pageBuilderRef = ref(null)
 const mobileBuilderRef = ref(null)
 
-onMounted(async () => {
-  const id = route.query.id
+async function loadPageContent(id) {
   if (!id) {
     ElMessage.error('缺少页面 ID')
     backToList()
@@ -56,6 +57,7 @@ onMounted(async () => {
   }
 
   pageId.value = id
+  loading.value = true
   const res = await curl({
     method: 'get',
     url: `/api/page/content/${id}`,
@@ -67,17 +69,29 @@ onMounted(async () => {
     return
   }
 
+  console.log('loadPageContent: id =', id, 'content_json length =', res.data.content_json?.length)
+  console.log('loadPageContent: content_json preview =', typeof res.data.content_json === 'string' ? res.data.content_json.slice(0, 200) : res.data.content_json)
   try {
     pageData.value = res.data.content_json ? JSON.parse(res.data.content_json) : null
   } catch {
     pageData.value = null
   }
+  console.log('loadPageContent: pageData parsed =', pageData.value ? 'NOT null' : 'null')
   pageTitle.value = res.data.title || ''
   pageDescription.value = res.data.description || ''
   pageStatus.value = res.data.status !== undefined ? res.data.status : 0
   initAppMode.value = res.data.mode === 1 ? 'APP' : 'PC'
 
   loading.value = false
+}
+
+onMounted(() => {
+  loadPageContent(route.query.id)
+})
+
+// 路由 query.id 变化时重新加载（同一路由不同 id 组件复用场景）
+watch(() => route.query.id, (newId) => {
+  if (newId) loadPageContent(newId)
 })
 
 const handleSave = async ({ pageId: id, title, description, status, mode, content_json, content_html }) => {

@@ -2,37 +2,31 @@
   <el-dialog
     :model-value="true"
     title="富文本编辑器"
-    width="800px"
+    width="860px"
     top="5vh"
     destroy-on-close
     @close="$emit('cancel')"
   >
-    <div class="rte-toolbar">
-      <button class="rte-btn" title="加粗" @click="exec('bold')"><strong>B</strong></button>
-      <button class="rte-btn" title="斜体" @click="exec('italic')"><em>I</em></button>
-      <button class="rte-btn" title="下划线" @click="exec('underline')"><u>U</u></button>
-      <button class="rte-btn" title="删除线" @click="exec('strikeThrough')"><s>S</s></button>
+    <div v-if="editor" class="rte-toolbar">
+      <button
+        v-for="(item, i) in toolbarItems"
+        :key="i"
+        :class="['rte-btn', { 'rte-btn--active': item.isActive?.() }]"
+        :title="item.title"
+        @click="item.action"
+      >
+        <span v-html="item.label"></span>
+      </button>
       <span class="rte-sep"></span>
-      <button class="rte-btn" title="代码" @click="insertCode">&lt;/&gt;</button>
-      <button class="rte-btn" title="引用" @click="exec('formatBlock', '<blockquote>')">❝</button>
-      <span class="rte-sep"></span>
-      <button class="rte-btn" title="标题 1" @click="exec('formatBlock', '<h1>')">H1</button>
-      <button class="rte-btn" title="标题 2" @click="exec('formatBlock', '<h2>')">H2</button>
-      <button class="rte-btn" title="标题 3" @click="exec('formatBlock', '<h3>')">H3</button>
-      <button class="rte-btn" title="段落" @click="exec('formatBlock', '<p>')">P</button>
-      <span class="rte-sep"></span>
-      <button class="rte-btn" title="无序列表" @click="exec('insertUnorderedList')">☰</button>
-      <button class="rte-btn" title="有序列表" @click="exec('insertOrderedList')">#</button>
-      <span class="rte-sep"></span>
-      <button class="rte-btn" title="左对齐" @click="exec('justifyLeft')">≡</button>
-      <button class="rte-btn" title="居中" @click="exec('justifyCenter')">≡</button>
-      <button class="rte-btn" title="右对齐" @click="exec('justifyRight')">≡</button>
-      <span class="rte-sep"></span>
-      <button class="rte-btn" title="水平线" @click="exec('insertHorizontalRule')">—</button>
-      <span class="rte-sep"></span>
-      <input type="color" class="rte-color" title="文本颜色" @input="onColorChange" />
+      <input
+        type="color"
+        class="rte-color"
+        title="文本颜色"
+        :value="editor.getAttributes('textStyle').color || '#000000'"
+        @input="onColorChange"
+      />
     </div>
-    <div ref="editorEl" class="rte-editor" contenteditable="true"></div>
+    <editor-content :editor="editor" class="rte-editor" />
     <template #footer>
       <el-button @click="$emit('cancel')">取消</el-button>
       <el-button type="primary" @click="handleConfirm">确认</el-button>
@@ -41,50 +35,72 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { onBeforeUnmount } from 'vue'
+import { useEditor, EditorContent } from '@tiptap/vue-3'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
+import TextAlign from '@tiptap/extension-text-align'
+import TextStyle from '@tiptap/extension-text-style'
+import Color from '@tiptap/extension-color'
 
 const props = defineProps({
   initialContent: { type: String, default: '' },
 })
 const emit = defineEmits(['confirm', 'cancel'])
 
-const editorEl = ref()
-
-onMounted(async () => {
-  document.execCommand('styleWithCSS', false, true)
-  await nextTick()
-  if (editorEl.value) {
-    editorEl.value.innerHTML = props.initialContent
-  }
+const editor = useEditor({
+  content: props.initialContent,
+  extensions: [
+    StarterKit.configure({
+      heading: { levels: [1, 2, 3] },
+    }),
+    Underline,
+    TextAlign.configure({ types: ['heading', 'paragraph'] }),
+    TextStyle,
+    Color,
+  ],
+  editorProps: {
+    attributes: {
+      style: 'min-height:300px;max-height:60vh;overflow-y:auto;outline:none;padding:16px;line-height:1.6;',
+    },
+  },
 })
 
-function exec(command, value) {
-  document.execCommand(command, false, value || null)
-  editorEl.value?.focus()
-}
+/* ========== Toolbar ========== */
 
-function insertCode() {
-  exec('insertHTML', '<code style="background:#f4f4f4;padding:2px 6px;border-radius:3px;font-size:0.9em;">代码</code>')
-}
+const toolbarItems = [
+  { label: '<strong>B</strong>', title: '加粗', action: () => editor.value?.chain().focus().toggleBold().run(), isActive: () => editor.value?.isActive('bold') },
+  { label: '<em>I</em>', title: '斜体', action: () => editor.value?.chain().focus().toggleItalic().run(), isActive: () => editor.value?.isActive('italic') },
+  { label: '<u>U</u>', title: '下划线', action: () => editor.value?.chain().focus().toggleUnderline().run(), isActive: () => editor.value?.isActive('underline') },
+  { label: '<s>S</s>', title: '删除线', action: () => editor.value?.chain().focus().toggleStrike().run(), isActive: () => editor.value?.isActive('strike') },
+  { label: '&lt;/&gt;', title: '行内代码', action: () => editor.value?.chain().focus().toggleCode().run(), isActive: () => editor.value?.isActive('code') },
+  { label: '❝', title: '引用', action: () => editor.value?.chain().focus().toggleBlockquote().run(), isActive: () => editor.value?.isActive('blockquote') },
+  { label: 'H1', title: '标题 1', action: () => editor.value?.chain().focus().toggleHeading({ level: 1 }).run(), isActive: () => editor.value?.isActive('heading', { level: 1 }) },
+  { label: 'H2', title: '标题 2', action: () => editor.value?.chain().focus().toggleHeading({ level: 2 }).run(), isActive: () => editor.value?.isActive('heading', { level: 2 }) },
+  { label: 'H3', title: '标题 3', action: () => editor.value?.chain().focus().toggleHeading({ level: 3 }).run(), isActive: () => editor.value?.isActive('heading', { level: 3 }) },
+  { label: 'P', title: '段落', action: () => editor.value?.chain().focus().setParagraph().run(), isActive: () => editor.value?.isActive('paragraph') },
+  { label: '☰', title: '无序列表', action: () => editor.value?.chain().focus().toggleBulletList().run(), isActive: () => editor.value?.isActive('bulletList') },
+  { label: '#', title: '有序列表', action: () => editor.value?.chain().focus().toggleOrderedList().run(), isActive: () => editor.value?.isActive('orderedList') },
+  { label: '≡', title: '左对齐', action: () => editor.value?.chain().focus().setTextAlign('left').run(), isActive: () => editor.value?.isActive({ textAlign: 'left' }) },
+  { label: '≡', title: '居中', action: () => editor.value?.chain().focus().setTextAlign('center').run(), isActive: () => editor.value?.isActive({ textAlign: 'center' }) },
+  { label: '≡', title: '右对齐', action: () => editor.value?.chain().focus().setTextAlign('right').run(), isActive: () => editor.value?.isActive({ textAlign: 'right' }) },
+  { label: '—', title: '水平线', action: () => editor.value?.chain().focus().setHorizontalRule().run(), isActive: () => null },
+  { label: '↩', title: '撤销', action: () => editor.value?.chain().focus().undo().run(), isActive: () => null },
+  { label: '↪', title: '重做', action: () => editor.value?.chain().focus().redo().run(), isActive: () => null },
+]
 
 function onColorChange(e) {
-  document.execCommand('foreColor', false, e.target.value)
-}
-
-function cleanHtml(html) {
-  let s = html
-  s = s.replace(/<p>\s*<\/p>/gi, '')
-  s = s.replace(/<span[^>]*>\s*<\/span>/gi, '')
-  s = s.replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>')
-  s = s.trim()
-  return s
+  editor.value?.chain().focus().setColor(e.target.value).run()
 }
 
 function handleConfirm() {
-  if (!editorEl.value) return
-  const html = cleanHtml(editorEl.value.innerHTML)
+  const html = editor.value?.getHTML() || ''
   emit('confirm', html)
 }
+
+onBeforeUnmount(() => {
+  editor.value?.destroy()
+})
 </script>
 
 <style scoped>
@@ -93,9 +109,9 @@ function handleConfirm() {
   align-items: center;
   flex-wrap: wrap;
   gap: 2px;
-  padding: 8px;
+  padding: 8px 12px;
   border-bottom: 1px solid #e0e0e0;
-  background: #fff;
+  background: #fafafa;
 }
 .rte-btn {
   display: inline-flex;
@@ -108,34 +124,68 @@ function handleConfirm() {
   background: transparent;
   cursor: pointer;
   border-radius: 4px;
-  font-size: 14px;
-  color: #333;
+  font-size: 13px;
+  color: #555;
 }
 .rte-btn:hover {
-  background: #f0f0f0;
+  background: #e8e8e8;
+}
+.rte-btn--active {
+  background: #409eff;
+  color: #fff;
 }
 .rte-sep {
   display: inline-block;
   width: 1px;
   height: 20px;
-  background: #e0e0e0;
-  margin: 0 4px;
+  background: #ddd;
+  margin: 0 6px;
 }
 .rte-color {
   width: 28px;
   height: 28px;
   padding: 0;
-  border: none;
-  cursor: pointer;
+  border: 1px solid #ddd;
   border-radius: 4px;
+  cursor: pointer;
 }
-.rte-editor {
+</style>
+
+<style>
+/* 富文本编辑区样式 */
+.rte-editor .ProseMirror {
   min-height: 300px;
   max-height: 60vh;
-  padding: 16px;
-  outline: none;
   overflow-y: auto;
-  background: #fff;
+  outline: none;
+  padding: 16px;
   line-height: 1.6;
+  background: #fff;
+  color: #333;
+}
+.rte-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #adb5bd;
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+.rte-editor .ProseMirror blockquote {
+  border-left: 3px solid #409eff;
+  padding-left: 16px;
+  margin: 0;
+  color: #666;
+}
+.rte-editor .ProseMirror pre {
+  background: #f4f4f4;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+.rte-editor .ProseMirror code {
+  background: #f4f4f4;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9em;
 }
 </style>

@@ -1,59 +1,43 @@
-import { ref, watch } from 'vue'
-
-/* ========== 富文本内容集合（ref + deep watch 驱动持久化） ========== */
-
-/** 内容数据源，key = componentId, value = html */
-const contentMap = ref({})
+import { ref } from 'vue'
 
 /**
- * 从画布遍历所有 editable-text 组件，将 data-rte-content 同步到 contentMap
+ * 将 HTML 写入组件的 content 属性并同步 DOM
+ * GrapesJS v0.22 优先使用子组件序列化，子组件为空时才用 content 属性
  */
-function initContentMap(editor) {
-  const next = {}
-  if (editor) {
-    const wrapper = editor.getWrapper()
-    if (wrapper) {
-      wrapper.findType('editable-text').forEach((comp) => {
-        const id = comp.getId()
-        if (!id) return
-        const attrs = comp.getAttributes()
-        const content = attrs['data-rte-content'] || comp.get('content') || comp.getEl()?.innerHTML || ''
-        if (content) next[id] = content
-      })
-    }
-  }
-  contentMap.value = next
+function setComponentContent(comp, html) {
+  comp.empty()
+  comp.set('content', html)
+  const el = comp.getEl()
+  if (el) el.innerHTML = html
 }
 
 /**
  * useRichTextModal — 富文本弹窗交互 composable
  *
- * 读写统一走 contentMap ref，deep watch 自动将变更同步到组件 data-rte-content 属性。
+ * 所有状态在函数作用域内，每次调用独立，不会跨编辑器实例污染。
+ *
+ * 交互流程：
+ *  1. 拖入富文本块 → 显示默认占位内容
+ *  2. 用户选中组件，在属性面板点击"编辑内容"按钮
+ *  3. 弹出富文本弹窗，编辑完成点确认
+ *  4. 内容 + 样式写入对应节点
  */
 export function useRichTextModal() {
-  /* ---- 弹窗状态 ---- */
   const showRichTextModal = ref(false)
   const modalInitialContent = ref('')
   let activeComponent = null
-  let suppressModal = false
+  let editor = null
 
-  /* ---- 弹窗交互 ---- */
-
-  function openRichTextModal(component) {
+  function openModal(component) {
     activeComponent = component
-    const id = component.getId()
-    const content = contentMap.value[id] || component.getEl()?.innerHTML || ''
-    modalInitialContent.value = content
+    const el = component.getEl()
+    modalInitialContent.value = el?.innerHTML || component.get('content') || ''
     showRichTextModal.value = true
   }
 
   function onRichTextConfirm(html) {
     if (!activeComponent) return
-    const id = activeComponent.getId()
-    // 更新组件模型 content 属性（确保 getProjectData() 正确序列化）
-    activeComponent.set('content', html)
-    // contentMap watch 自动同步到 data-rte-content 属性 + DOM
-    contentMap.value[id] = html
+    setComponentContent(activeComponent, html)
     activeComponent = null
     showRichTextModal.value = false
   }
@@ -63,40 +47,11 @@ export function useRichTextModal() {
     showRichTextModal.value = false
   }
 
-  /* ---- 持久化：contentMap → 组件 data-rte-content 属性 ---- */
-
-  let _editor = null
-
-  watch(
-    contentMap,
-    (map) => {
-      if (!_editor) return
-      const wrapper = _editor.getWrapper()
-      if (!wrapper) return
-      wrapper.findType('editable-text').forEach((comp) => {
-        const id = comp.getId()
-        if (!id || !map[id]) return
-        const attrs = comp.getAttributes()
-        if (attrs['data-rte-content'] !== map[id]) {
-          comp.set('attributes', { ...attrs, 'data-rte-content': map[id] }, { silent: true })
-        }
-        // 同步 DOM 内容（解决加载已有数据时画布显示默认内容的问题）
-        const el = comp.getEl()
-        if (el && el.innerHTML !== map[id]) {
-          el.innerHTML = map[id]
-        }
-      })
-    },
-    { deep: true },
-  )
-
-  /* ---- GrapesJS 集成 ---- */
-
-  function init(editor) {
-    _editor = editor
+  function init(ed) {
+    editor = ed
 
     // 注册组件类型
-    editor.DomComponents.addType('editable-text', {
+    ed.DomComponents.addType('editable-text', {
       model: {
         defaults: {
           name: '富文本',
@@ -116,41 +71,32 @@ export function useRichTextModal() {
     })
 
     // 注册命令：traits 面板按钮触发
-    editor.Commands.add('open-rich-text-modal', {
-      run(ed) {
-        const component = ed.getSelected()
-        if (!component || activeComponent) return
-        openRichTextModal(component)
+    ed.Commands.add('open-rich-text-modal', {
+      run(editor) {
+        const component = editor.getSelected()
+        if (!component || component.get('type') !== 'editable-text') return
+        if (activeComponent) return
+        openModal(component)
       },
     })
 
-    // 拖入/加载时自动弹窗 + 同步 contentMap
-    editor.on('component:mount', (component) => {
+    // 加载数据后恢复 DOM 内容（不自动弹窗）
+    ed.on('component:mount', (component) => {
       if (component.get('type') !== 'editable-text') return
-      // 将组件内容写入 contentMap（watch 自动持久化 data-rte-content）
-      const id = component.getId()
-      if (id) {
-        const attrs = component.getAttributes()
-        const content = attrs['data-rte-content'] || component.getEl()?.innerHTML || ''
-        if (content) contentMap.value[id] = content
+      const content = component.get('content')
+      if (content) {
+        const el = component.getEl()
+        if (el) el.innerHTML = content
       }
-      // 新拖入时自动弹窗
-      if (!suppressModal) openRichTextModal(component)
     })
   }
 
-  function loadData(editor, data) {
-    suppressModal = true
-    try {
-      editor.loadProjectData(data)
-    } finally {
-      suppressModal = false
-    }
-    initContentMap(editor)
+  function loadData(ed, data) {
+    ed.loadProjectData(data)
   }
 
   function clearMap() {
-    contentMap.value = {}
+    activeComponent = null
   }
 
   return {

@@ -38,7 +38,7 @@ import grapesjs from 'grapesjs'
 import 'grapesjs-preset-webpage'
 import 'grapesjs/dist/css/grapes.min.css'
 import { inlineStyles } from './util/html-utils'
-import getBlocks from './blocks'
+import getBlocks from './blocks.js'
 import getStyleManager from './style-manager'
 import getLocaleConfig from './locales'
 import RichTextModal from './widgets/rich-text/rich-text-modal.vue'
@@ -86,6 +86,7 @@ function initSetting() {
     device: 'mobilePortrait',
     showDevices: false,
     styleManager: getStyleManager(props.lang, 'rem'),
+    storageManager: { type: null },
   }
 }
 

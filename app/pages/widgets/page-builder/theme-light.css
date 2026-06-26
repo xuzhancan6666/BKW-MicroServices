@@ -1,0 +1,230 @@
+/* ========== GrapesJS 浅色主题 ========== */
+.theme-light .gjs-one-bg {
+  background-color: #fff;
+}
+.theme-light .gjs-two-color {
+  color: #383838;
+}
+.theme-light .gjs-three-bg {
+  background-color: #f7f7f7;
+}
+.theme-light .gjs-four-color,
+.theme-light .gjs-four-color-h:hover {
+  color: #787878;
+}
+
+/* 面板 */
+.theme-light .gjs-pn-panel {
+  background: #fff;
+  border-color: #e8e8e8;
+  box-shadow: none;
+}
+.theme-light .gjs-pn-commands {
+  background: #fafafa;
+  border-bottom-color: #e8e8e8;
+}
+.theme-light .gjs-pn-options {
+  background: #fafafa;
+  border-bottom-color: #e8e8e8;
+}
+
+/* 工具栏按钮 */
+.theme-light .gjs-pn-btn {
+  color: #666;
+}
+.theme-light .gjs-pn-btn:hover {
+  color: #409eff;
+  background: rgba(64,158,255,.06);
+}
+.theme-light .gjs-pn-btn.gjs-pn-active {
+  color: #409eff;
+  background: rgba(64,158,255,.1);
+}
+
+/* 区块面板 */
+.theme-light .gjs-blocks-c {
+  background: #fafafa;
+}
+.theme-light .gjs-block {
+  background: #fff;
+  border-color: #e8e8e8;
+  color: #383838;
+}
+.theme-light .gjs-block:hover {
+  border-color: #409eff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.theme-light .gjs-block svg {
+  fill: #666;
+}
+.theme-light .gjs-block-category .gjs-title {
+  background: #f5f5f5;
+  color: #383838;
+  border-bottom-color: #e8e8e8;
+}
+
+/* 样式管理器 */
+.theme-light .gjs-sm-sector .gjs-sm-title {
+  background: #f5f5f5;
+  color: #383838;
+  border-bottom-color: #e8e8e8;
+}
+.theme-light .gjs-sm-sector .gjs-sm-property {
+  border-bottom-color: #eee;
+}
+.theme-light .gjs-sm-property .gjs-sm-label {
+  color: #666;
+}
+.theme-light .gjs-sm-sector .gjs-sm-stack #gjs-sm-add {
+  color: #409eff;
+}
+.theme-light .gjs-field {
+  background: #fff;
+  border-color: #dcdfe6;
+  color: #383838;
+}
+.theme-light .gjs-field input,
+.theme-light .gjs-field select,
+.theme-light .gjs-field textarea {
+  background: #fff;
+  color: #383838;
+  border-color: #dcdfe6;
+}
+.theme-light .gjs-field input:focus,
+.theme-light .gjs-field select:focus {
+  border-color: #409eff;
+}
+.theme-light .gjs-field .gjs-d-s-arrow {
+  border-top-color: #666;
+}
+.theme-light .gjs-select option {
+  background: #fff;
+  color: #383838;
+}
+
+/* 图层管理器 */
+.theme-light .gjs-clm-tags .gjs-sm-title {
+  background: #f5f5f5;
+  color: #383838;
+  border-bottom-color: #e8e8e8;
+}
+.theme-light .gjs-clm-tags .gjs-clm-tag {
+  background: #ecf5ff;
+  color: #409eff;
+}
+.theme-light .gjs-clm-tags .gjs-clm-tag-status {
+  color: #67c23a;
+}
+.theme-light .gjs-clm-tags #gjs-clm-new {
+  color: #409eff;
+}
+.theme-light .gjs-clm-tags #gjs-clm-up {
+  color: #67c23a;
+}
+.theme-light .gjs-clm-tags #gjs-clm-down {
+  color: #e6a23c;
+}
+.theme-light .gjs-layer {
+  background: #fff;
+  color: #383838;
+  border-bottom-color: #f0f0f0;
+}
+.theme-light .gjs-layer:hover {
+  background: #f5f7fa;
+}
+.theme-light .gjs-layer.gjs-selected {
+  background: #ecf5ff;
+}
+.theme-light .gjs-layer-title {
+  background: #f5f5f5;
+  color: #383838;
+  border-bottom-color: #e8e8e8;
+}
+.theme-light .gjs-layer-name {
+  color: #383838;
+}
+.theme-light .gjs-layer-vis {
+  color: #999;
+}
+.theme-light .gjs-layer-caret {
+  color: #999;
+}
+.theme-light .gjs-layer-move {
+  color: #999;
+}
+
+/* 属性面板 */
+.theme-light .gjs-trt-trait {
+  background: #fff;
+  border-bottom-color: #eee;
+}
+.theme-light .gjs-trt-trait .gjs-label {
+  color: #666;
+}
+.theme-light .gjs-trt-trait .gjs-field {
+  background: #fff;
+}
+
+/* 选择器管理器 */
+.theme-light .gjs-selector-manager .gjs-sm-sector .gjs-sm-title {
+  background: #f5f5f5;
+}
+
+/* 画布 */
+.theme-light .gjs-cv-canvas {
+  background-color: #e8e8e8;
+}
+.theme-light .gjs-cv-canvas .gjs-cv-canvas-bg {
+  background-color: #e8e8e8;
+}
+
+/* 设备选择器 */
+.theme-light .gjs-pn-devices-c {
+  color: #383838;
+}
+
+/* 标签页头部 */
+.theme-light .gjs-am-preview-cont {
+  background: #fafafa;
+  border-bottom-color: #e8e8e8;
+}
+.theme-light .gjs-am-preview-cont .gjs-am-preview {
+  color: #666;
+}
+.theme-light .gjs-am-preview-cont .gjs-am-preview.gjs-am-preview-active {
+  color: #409eff;
+}
+
+/* 状态指示 */
+.theme-light .gjs-pn-panel .gjs-pn-panel__header {
+  background: #f5f5f5;
+  color: #383838;
+}
+
+/* 颜色选择器 */
+.theme-light .gjs-field-color-picker {
+  background: #fff;
+}
+
+/* 滚动条 */
+.theme-light .gjs-pn-panels::-webkit-scrollbar-thumb,
+.theme-light .gjs-pn-panel::-webkit-scrollbar-thumb {
+  background: #c0c4cc;
+}
+.theme-light .gjs-pn-panels::-webkit-scrollbar-track,
+.theme-light .gjs-pn-panel::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+/* 模态框 */
+.theme-light .gjs-mdl-dialog {
+  background: #fff;
+  color: #383838;
+}
+.theme-light .gjs-mdl-header {
+  background: #fafafa;
+  border-bottom-color: #e8e8e8;
+}
+.theme-light .gjs-mdl-btn-close {
+  color: #999;
+}

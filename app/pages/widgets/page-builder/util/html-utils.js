@@ -57,3 +57,26 @@ export function inlineStyles(html, css) {
 
   return doc.body.innerHTML
 }
+
+/**
+ * 为导出的 HTML 片段添加 PC 端自适应容器
+ */
+export function wrapPcContainer(html) {
+  return '<div class="page-container" style="width:100%;max-width:1200px;margin:0 auto;padding:0 1rem;box-sizing:border-box;">\n' + html + '\n</div>'
+}
+
+/**
+ * 生成 APP 端视口等比缩放脚本
+ * @param {number} designWidth  画布设计宽度，默认 375
+ */
+export function getFlexibleScript(designWidth) {
+  designWidth = designWidth || 375
+  return '<script>\n' +
+    ';(function() {\n' +
+    '  var dw = ' + designWidth + '\n' +
+    '  var bf = 16\n' +
+    '  var s = window.innerWidth / dw\n' +
+    '  document.documentElement.style.fontSize = (s * bf) + "px"\n' +
+    '})()\n' +
+    '</script>'
+}
