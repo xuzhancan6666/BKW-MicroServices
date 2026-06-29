@@ -58,8 +58,11 @@ function toggleTheme() {
 }
 
 /** PC 使用 desktop 设备，APP 用自定义 375px 设备 */
-const CANVAS_WIDTH = { PC: 'desktop', APP: 'mobile' }
+const CANVAS_WIDTH = { PC: 'desktop', APP: 'mobile-app' }
 const gjsDevice = computed(() => CANVAS_WIDTH[props.canvasMode] || CANVAS_WIDTH.PC)
+
+/** APP 模式使用的自定义设备定义 */
+const appDeviceDef = { id: 'mobile-app', name: '手机', width: '375px' }
 
 /* ========== 富文本弹窗 ========== */
 
@@ -83,6 +86,9 @@ function initSetting() {
     i18n: getLocaleConfig(props.lang),
     device: gjsDevice.value,
     showDevices: false,
+    deviceManager: {
+      devices: props.canvasMode === 'APP' ? [appDeviceDef] : [],
+    },
     styleManager: getStyleManager(props.lang),
     selectorManager: { componentFirst: true },
     layerManager: { appendTo: '.layers-container' },
@@ -101,6 +107,15 @@ function initEditor() {
 
 /** 注册 layout 组件类型 */
 function registerLayoutComponent() {
+  editor.DomComponents.addType('resizable-div', {
+    model: {
+      defaults: {
+        name: '自由块',
+        draggable: true,
+        style: { minHeight: '64px' },
+      },
+    },
+  })
   editor.DomComponents.addType('iframe-embed', {
     model: {
       defaults: {
@@ -114,7 +129,7 @@ function registerLayoutComponent() {
 
 /** 注册 blocks.js 中定义的全部自定义组件块 */
 function registerCustomBlocks() {
-  const customBlocks = getBlocks(props.canvasMode)
+  const customBlocks = getBlocks()
   customBlocks.forEach(block => {
     editor.Blocks.add(block.id, {
       label: block.label,
@@ -123,18 +138,6 @@ function registerCustomBlocks() {
       ...(block.media ? { media: block.media } : {}),
     })
   })
-}
-
-/** APP 模式：注册 375px 自定义设备 */
-function registerCustomDevice() {
-  const existing = editor.Devices.get('mobile-app')
-  if (existing) editor.Devices.remove('mobile-app')
-  editor.Devices.add({
-    id: 'mobile-app',
-    name: '手机',
-    width: '375px',
-  })
-  editor.setDevice('mobile-app')
 }
 
 /** 为组件覆写属性面板（traits） */
@@ -154,20 +157,12 @@ function setupTraits() {
  */
 function loadInitialData() {
   editor.setDragMode('select')
-  if (props.canvasMode === 'APP') {
-    const dev = editor.Devices.get('mobile-app')
-    if (dev) editor.setDevice('mobile-app')
-  } else if (gjsDevice.value !== 'desktop') {
-    editor.setDevice(gjsDevice.value)
-  }
-  console.log('123213213', props.initData ? 'has data' : 'null')
   if (props.initData) {
     console.log('loadInitialData: initData keys =', Object.keys(props.initData))
     console.log('loadInitialData: pages count =', props.initData.pages?.length)
     if (props.initData.pages?.[0]?.frames?.[0]?.component) {
       const comp = props.initData.pages[0].frames[0].component
-      console.log('loadInitialData: wrapper components =', comp.components?.length)
-    }
+        }
     editor.loadProjectData(props.initData)
   } else {
     console.log('loadInitialData: no initData, starting with empty canvas')
@@ -180,8 +175,6 @@ onMounted(() => {
   registerLayoutComponent()
   // 注册 BLock
   registerCustomBlocks()
-  // APP 模式：注册 375px 自定义设备
-  if (props.canvasMode === 'APP') registerCustomDevice()
   // 隐藏布局管理器按钮（业务人员不需要）
   editor.Panels.removeButton('views', 'open-layers')
   // 再初始化富文本（注册 editable-text 类型、命令、事件）

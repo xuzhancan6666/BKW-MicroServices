@@ -5,23 +5,13 @@
       <span>加载中...</span>
     </div>
     <page-builder
-      v-else-if="initAppMode === 'PC'"
+      v-else
       :key="pageId"
       ref="pageBuilderRef"
       :page-id="pageId"
       :init-data="pageData"
       :lang="'zh_HK'"
       :canvas-mode="initAppMode"
-      @save="handleSave"
-      @back="backToList"
-    />
-    <mobile-builder
-      v-else
-      :key="pageId"
-      ref="mobileBuilderRef"
-      :page-id="pageId"
-      :init-data="pageData"
-      :lang="'zh_HK'"
       @save="handleSave"
       @back="backToList"
     />
@@ -33,7 +23,6 @@ import { ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import PageBuilder from '$widgets/page-builder/page-builder.vue'
-import MobileBuilder from '$widgets/page-builder/mobile-builder.vue'
 import curl from '$common/curl.js'
 
 const route = useRoute()
@@ -47,7 +36,6 @@ const pageDescription = ref('')
 const pageStatus = ref(0)
 const initAppMode = ref('PC')
 const pageBuilderRef = ref(null)
-const mobileBuilderRef = ref(null)
 
 async function loadPageContent(id) {
   if (!id) {

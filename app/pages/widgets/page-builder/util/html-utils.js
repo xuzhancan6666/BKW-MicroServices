@@ -2,6 +2,7 @@
  * html-utils.js
  *
  * GrapesJS 工具函数：将 CSS 内联到 HTML 中，生成自包含的 HTML 片段。
+ * 以及 px→rem 转换（用于 APP 模式导出）。
  */
 
 /**
@@ -59,6 +60,43 @@ export function inlineStyles(html, css) {
 }
 
 /**
+ * 将 CSS 中的 px 值转换为 rem（用于 APP 模式导出）
+ *
+ * 只转换尺寸相关属性（width、padding、margin、font-size 等），
+ * 边框、阴影等不影响布局的属性不转换。
+ *
+ * @param {string} css          GrapesJS 输出的 CSS 文本
+ * @param {number} baseFontSize 基准字号，默认 16
+ * @returns {string}  已转换的 CSS
+ */
+export function convertPxToRem(css, baseFontSize = 16) {
+  if (!css) return css
+
+  const convertProps = [
+    'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+    'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+    'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+    'font-size',
+    'border-radius', 'border-top-left-radius', 'border-top-right-radius',
+    'border-bottom-left-radius', 'border-bottom-right-radius',
+    'gap', 'row-gap', 'column-gap',
+    'flex-basis',
+    'top', 'right', 'bottom', 'left',
+  ]
+
+  const propPattern = `(${convertProps.join('|')})\\s*:\\s*([^;]+)`
+  const re = new RegExp(propPattern, 'gi')
+
+  return css.replace(re, (match, property, value) => {
+    const newValue = value.replace(/([\d.]+)px/g, (_m, num) => {
+      const rem = (parseFloat(num) / baseFontSize).toFixed(4).replace(/\.?0+$/, '')
+      return rem + 'rem'
+    })
+    return `${property}: ${newValue}`
+  })
+}
+
+/**
  * 为导出的 HTML 片段添加 PC 端自适应容器
  */
 export function wrapPcContainer(html) {
@@ -67,16 +105,33 @@ export function wrapPcContainer(html) {
 
 /**
  * 生成 APP 端视口等比缩放脚本
+ *
+ * 原理：根据屏幕宽度 / 设计宽度 × 基准字号 动态设置根字号，
+ * 页面内所有 rem 单位自动等比缩放。
+ * - 宽高比限制（pad 上不会拉变形）
+ * - resize 监听（横竖屏切换）
+ * - 最大字号上限防止平板字号过大
+ *
  * @param {number} designWidth  画布设计宽度，默认 375
+ * @param {number} maxWidth     触达上限宽度的屏幕宽度，默认 540
+ * @param {number} baseFontSize 基准根字号 px，默认 16
  */
-export function getFlexibleScript(designWidth) {
+export function getFlexibleScript(designWidth, maxWidth, baseFontSize) {
   designWidth = designWidth || 375
+  maxWidth = maxWidth || 540
+  baseFontSize = baseFontSize || 16
   return '<script>\n' +
     ';(function() {\n' +
     '  var dw = ' + designWidth + '\n' +
-    '  var bf = 16\n' +
-    '  var s = window.innerWidth / dw\n' +
-    '  document.documentElement.style.fontSize = (s * bf) + "px"\n' +
+    '  var mw = ' + maxWidth + '\n' +
+    '  var bf = ' + baseFontSize + '\n' +
+    '  function set() {\n' +
+    '    var w = Math.min(document.documentElement.clientWidth, mw)\n' +
+    '    document.documentElement.style.fontSize = (w / dw * bf) + "px"\n' +
+    '  }\n' +
+    '  set()\n' +
+    '  window.addEventListener("resize", set)\n' +
+    '  window.addEventListener("orientationchange", set)\n' +
     '})()\n' +
     '</script>'
 }
