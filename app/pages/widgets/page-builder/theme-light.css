@@ -43,7 +43,7 @@
 
 /* 区块面板 */
 .theme-light .gjs-blocks-c {
-  background: #fafafa;
+  background: #fff;
 }
 .theme-light .gjs-block {
   background: #fff;
@@ -58,7 +58,7 @@
   fill: #666;
 }
 .theme-light .gjs-block-category .gjs-title {
-  background: #f5f5f5;
+  background: #fff;
   color: #383838;
   border-bottom-color: #e8e8e8;
 }
@@ -172,10 +172,10 @@
 
 /* 画布 */
 .theme-light .gjs-cv-canvas {
-  background-color: #e8e8e8;
+  background-color: #fff;
 }
 .theme-light .gjs-cv-canvas .gjs-cv-canvas-bg {
-  background-color: #e8e8e8;
+  background-color: #fff;
 }
 
 /* 设备选择器 */

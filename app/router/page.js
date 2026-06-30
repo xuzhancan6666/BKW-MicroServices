@@ -15,4 +15,6 @@ module.exports = (app, router) => {
   router.put('/api/page/content/:id',      page.update.bind(page))
   // 删除页面 —— table-panel 拼接 /list
   router.delete('/api/page/content/list',  page.delete.bind(page))
+  // 组件同步 —— 将组件更新推送到引用它的页面
+  router.post('/api/page/content/:id/sync', page.sync.bind(page))
 }

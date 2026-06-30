@@ -12,26 +12,26 @@ const layout = () => [
     id: 'layout-resizable',
     label: '自由块',
     category: '布局',
-    content: `<div data-gjs-type="resizable-div" style="width:100%;min-width:${px(280)};min-height:${px(64)};background:#f0f0f0;"></div>`,
+    content: `<div data-gjs-type="resizable-div" style="width:100%;min-width:${px(280)};min-height:${px(64)};background:#fff;"></div>`,
   },
   {
     id: 'layout-horizontal',
     label: '横向排列',
     category: '布局',
-    content: `<div data-gjs-type="resizable-div" data-layout="horizontal" style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:${px(8)};padding:${px(8)};background:#f0f0f0;">
-      <div data-gjs-type="resizable-div" style="flex:1;min-height:${px(64)};background:#fafafa;"></div>
-      <div data-gjs-type="resizable-div" style="flex:1;min-height:${px(64)};background:#fafafa;"></div>
-      <div data-gjs-type="resizable-div" style="flex:1;min-height:${px(64)};background:#fafafa;"></div>
+    content: `<div data-gjs-type="resizable-div" data-layout="horizontal" style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:${px(8)};padding:${px(8)};background:#fff;">
+      <div data-gjs-type="resizable-div" style="flex:1;min-height:${px(64)};background:#fff;"></div>
+      <div data-gjs-type="resizable-div" style="flex:1;min-height:${px(64)};background:#fff;"></div>
+      <div data-gjs-type="resizable-div" style="flex:1;min-height:${px(64)};background:#fff;"></div>
     </div>`,
   },
   {
     id: 'layout-vertical',
     label: '纵向排列',
     category: '布局',
-    content: `<div data-gjs-type="resizable-div" data-layout="vertical" style="display:flex;flex-direction:column;gap:${px(8)};padding:${px(8)};background:#f0f0f0;">
-      <div data-gjs-type="resizable-div" style="width:100%;min-height:${px(64)};background:#fafafa;"></div>
-      <div data-gjs-type="resizable-div" style="width:100%;min-height:${px(64)};background:#fafafa;"></div>
-      <div data-gjs-type="resizable-div" style="width:100%;min-height:${px(64)};background:#fafafa;"></div>
+    content: `<div data-gjs-type="resizable-div" data-layout="vertical" style="display:flex;flex-direction:column;gap:${px(8)};padding:${px(8)};background:#fff;">
+      <div data-gjs-type="resizable-div" style="width:100%;min-height:${px(64)};background:#fff;"></div>
+      <div data-gjs-type="resizable-div" style="width:100%;min-height:${px(64)};background:#fff;"></div>
+      <div data-gjs-type="resizable-div" style="width:100%;min-height:${px(64)};background:#fff;"></div>
     </div>`,
   },
 ]

@@ -16,6 +16,7 @@ module.exports = (app) => {
         page:        ctx.query.page,
         size:        ctx.query.size,
         project_key: ctx.query.project_key,
+        type:        ctx.query.type,
       }
 
       const { list, total } = await pageService.getList(params)
@@ -107,6 +108,35 @@ module.exports = (app) => {
       await pageService.delete(id)
 
       this.success(ctx, null)
+    }
+
+    /**
+     * POST /api/page/content/:id/sync
+     * 将组件更新同步到所有引用它的页面
+     */
+    async sync(ctx) {
+      const id = parseInt(ctx.params.id, 10)
+      if (!id) {
+        this.fail(ctx, '参数异常：id 必须为数字', 442)
+        return
+      }
+
+      const component = await pageService.getById(id)
+      if (!component) {
+        this.fail(ctx, '组件不存在', 445)
+        return
+      }
+      if (component.type !== 'component') {
+        this.fail(ctx, '只有组件类型可以执行同步操作', 442)
+        return
+      }
+
+      const updatedPages = await pageService.syncComponentToPages(
+        id,
+        component.content_html || ''
+      )
+
+      this.success(ctx, { updatedPages })
     }
   }
 }

@@ -12,6 +12,7 @@
       :init-data="pageData"
       :lang="'zh_HK'"
       :canvas-mode="initAppMode"
+      :editor-type="editorType"
       @save="handleSave"
       @back="backToList"
     />
@@ -34,6 +35,7 @@ const pageData = ref(null)
 const pageTitle = ref('')
 const pageDescription = ref('')
 const pageStatus = ref(0)
+const editorType = ref('page')
 const initAppMode = ref('PC')
 const pageBuilderRef = ref(null)
 
@@ -65,6 +67,7 @@ async function loadPageContent(id) {
     pageData.value = null
   }
   console.log('loadPageContent: pageData parsed =', pageData.value ? 'NOT null' : 'null')
+  editorType.value = res.data.type || 'page'
   pageTitle.value = res.data.title || ''
   pageDescription.value = res.data.description || ''
   pageStatus.value = res.data.status !== undefined ? res.data.status : 0

@@ -6,6 +6,7 @@
       <span class="page-title">落地页编辑器</span>
       <el-button @click="clearCanvas">清空画布</el-button>
       <el-button @click="exportHtml">导出 HTML</el-button>
+      <el-button v-if="editorType === 'component' && pageId" @click="handleSync">同步引用</el-button>
       <el-button @click="toggleTheme">{{ isLightTheme ? '☀' : '☾' }}</el-button>
       <el-button type="primary" @click="handleSave">保存</el-button>
     </div>
@@ -33,14 +34,17 @@ import getStyleManager from './style-manager'
 import getLocaleConfig from './locales'
 import RichTextModal from './widgets/rich-text/rich-text-modal.vue'
 import { useRichTextModal } from './widgets/rich-text/index.js'
+import { registerComponentInstanceType } from './widgets/component-instance/index.js'
+import curl from '$common/curl.js'
 
 /* ========== Props & Emit ========== */
 
 const props = defineProps({
-  pageId:    { type: [Number, String], default: null },
-  initData:  { type: Object, default: null },
-  canvasMode:{ type: String, default: 'PC' },
-  lang:      { type: String, default: 'zh_CN' }, // zh_CN | zh_HK | en_US
+  pageId:     { type: [Number, String], default: null },
+  initData:   { type: Object, default: null },
+  canvasMode: { type: String, default: 'PC' },
+  lang:       { type: String, default: 'zh_CN' }, // zh_CN | zh_HK | en_US
+  editorType: { type: String, default: 'page' },  // page | component
 })
 
 const emit = defineEmits(['save', 'back'])
@@ -50,6 +54,10 @@ const emit = defineEmits(['save', 'back'])
 const editorContainer = ref()
 let editor = null
 const isLightTheme = ref(localStorage.getItem('gjs-theme') !== 'dark')
+
+// 组件引用相关
+const componentList = ref([])    // { id, title, content_html }[]
+const componentLoaded = ref(false)
 
 function toggleTheme() {
   isLightTheme.value = !isLightTheme.value
@@ -140,6 +148,32 @@ function registerCustomBlocks() {
   })
 }
 
+/** 从 API 拉取所有组件并注册为 block（仅 page 模式） */
+async function fetchAndRegisterComponentBlocks() {
+  const res = await curl({
+    method: 'get',
+    url: '/api/page/content/list',
+    query: { type: 'component', size: 1000 },
+  })
+  componentList.value = res?.data || []
+
+  // 先注册 component-instance 类型
+  registerComponentInstanceType(editor)
+
+  // 再将每个组件注册为 block
+  componentList.value.forEach(comp => {
+    const id = comp.id
+    const html = comp.content_html || '<div style="padding:16px;color:#999;">组件内容为空</div>'
+    editor.Blocks.add('component-ref-' + id, {
+      label: comp.title || ('组件 #' + id),
+      category: '自定义组件',
+      content: '<div data-gjs-type="component-instance" data-component-id="' + id + '" data-component-name="' + (comp.title || '') + '">' + html + '</div>',
+      media: '<div style="padding:8px;text-align:center;font-size:12px;color:#999;">📦 ' + (comp.title || '组件').slice(0, 8) + '</div>',
+    })
+  })
+  componentLoaded.value = true
+}
+
 /** 为组件覆写属性面板（traits） */
 function setupTraits() {
   editor.on('component:create', (component) => {
@@ -169,17 +203,23 @@ function loadInitialData() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   initEditor()
   // 先注册基础组件类型
   registerLayoutComponent()
   // 注册 BLock
   registerCustomBlocks()
+  // 注册自定义组件模块 block
+  registerCustomComponentBlocks()
   // 隐藏布局管理器按钮（业务人员不需要）
   editor.Panels.removeButton('views', 'open-layers')
   // 再初始化富文本（注册 editable-text 类型、命令、事件）
   rteInit(editor)
   setupTraits()
+  // Page 模式下从 API 拉取组件并注册为 block
+  if (props.editorType === 'page') {
+    await fetchAndRegisterComponentBlocks()
+  }
   loadInitialData()
 })
 
@@ -209,8 +249,8 @@ function handleSave() {
   const fullCss = editor.getCss()
   let inlined = inlineStyles(html, fullCss)
 
-  // PC 模式：外层包裹自适应容器
-  if (props.canvasMode !== 'APP') {
+  // PC 页面：外层包裹自适应容器（组件类型不包裹，保持纯净 HTML）
+  if (props.canvasMode !== 'APP' && props.editorType === 'page') {
     inlined = wrapPcContainer(inlined)
   }
 
@@ -269,6 +309,30 @@ function exportHtml() {
   a.click()
   URL.revokeObjectURL(url)
   ElMessage.success('已导出 page.html')
+}
+
+/* ========== Sync ========== */
+
+async function handleSync() {
+  if (!props.pageId) return
+  try {
+    const res = await curl({
+      method: 'post',
+      url: '/api/page/content/' + props.pageId + '/sync',
+    })
+    if (res?.success) {
+      const count = res.data?.updatedPages || 0
+      if (count > 0) {
+        ElMessage.success('已更新 ' + count + ' 个页面的引用数据，这些页面需重新发布')
+      } else {
+        ElMessage.info('没有页面引用此组件')
+      }
+    } else {
+      ElMessage.error('同步失败')
+    }
+  } catch {
+    ElMessage.error('同步请求失败')
+  }
 }
 
 /* ========== Actions ========== */
