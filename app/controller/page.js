@@ -17,6 +17,7 @@ module.exports = (app) => {
         size:        ctx.query.size,
         project_key: ctx.query.project_key,
         type:        ctx.query.type,
+        ids:         ctx.query.ids,
       }
 
       const { list, total } = await pageService.getList(params)

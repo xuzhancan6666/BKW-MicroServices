@@ -55,28 +55,18 @@ const text = () => {
 const media = () => [
   {
     id: 'media-image', label: '图片', category: '媒体',
-    content: `<div style="width:100%;min-height:${px(120)};background:#f0f0f0;overflow:hidden;">
-      <img data-gjs-type="image" src="https://via.placeholder.com/400x300" alt="图片" style="width:100%;height:auto;display:block;" />
-    </div>`,
+    content: `<img data-gjs-type="image" src="https://via.placeholder.com/200x200" alt="图片" style="width:200px;height:200px;" />`,
   },
   {
     id: 'media-video', label: '视频', category: '媒体',
     content: `<div data-gjs-type="video" data-video-source="yt" data-video-url="https://www.youtube.com/watch?v=placeholder" style="max-width:100%;"></div>`,
-  },
-  {
-    id: 'media-iframe', label: '嵌入', category: '媒体',
-    content: `<div data-gjs-type="iframe-embed" style="position:relative;width:100%;max-width:100%;padding-bottom:56.25%;background:#000;overflow:hidden;"><iframe src="" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen></iframe></div>`,
-  },
+  }
 ]
 
 const components = () => [
   {
     id: 'comp-editable-text', label: '富文本块', category: '组件',
     content: `<div data-gjs-type="editable-text" style="padding:${px(16)};min-height:${px(48)};width:100%;"><p style="margin:0;color:#999;">点击编辑内容</p></div>`,
-  },
-  {
-    id: 'comp-button', label: '按钮', category: '组件',
-    content: `<button style="display:inline-block;padding:${px(8)} ${px(20)};font-size:${px(14)};border:none;border-radius:${px(6)};background:#409eff;color:#fff;cursor:pointer;text-align:center;line-height:1;">按钮</button>`,
   },
   {
     id: 'comp-divider', label: '分割线', category: '组件',

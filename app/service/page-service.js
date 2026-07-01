@@ -40,6 +40,12 @@ module.exports = (app) => {
       if (params.type) {
         query.where('type', params.type)
       }
+      if (params.ids) {
+        const ids = String(params.ids).split(',').map(Number).filter(Boolean)
+        if (ids.length > 0) {
+          query.whereIn('id', ids)
+        }
+      }
 
       const [{ total }] = await query.clone().count('* as total')
       const list = await query.clone()

@@ -11,7 +11,6 @@
       :page-id="pageId"
       :init-data="pageData"
       :lang="'zh_HK'"
-      :canvas-mode="initAppMode"
       :editor-type="editorType"
       @save="handleSave"
       @back="backToList"
@@ -36,7 +35,6 @@ const pageTitle = ref('')
 const pageDescription = ref('')
 const pageStatus = ref(0)
 const editorType = ref('page')
-const initAppMode = ref('PC')
 const pageBuilderRef = ref(null)
 
 async function loadPageContent(id) {
@@ -62,7 +60,14 @@ async function loadPageContent(id) {
   console.log('loadPageContent: id =', id, 'content_json length =', res.data.content_json?.length)
   console.log('loadPageContent: content_json preview =', typeof res.data.content_json === 'string' ? res.data.content_json.slice(0, 200) : res.data.content_json)
   try {
-    pageData.value = res.data.content_json ? JSON.parse(res.data.content_json) : null
+    const parsed = res.data.content_json ? JSON.parse(res.data.content_json) : null
+    // 注入组件最新内容（自动更新引用组件）
+    if (parsed) {
+      await injectLatestComponents(parsed)
+      console.log('[debug] loadPageContent: after inject, pageData.pages[0].frames[0].component.components[0].components length =',
+        parsed?.pages?.[0]?.frames?.[0]?.component?.components?.[0]?.components?.length)
+    }
+    pageData.value = parsed
   } catch {
     pageData.value = null
   }
@@ -71,9 +76,84 @@ async function loadPageContent(id) {
   pageTitle.value = res.data.title || ''
   pageDescription.value = res.data.description || ''
   pageStatus.value = res.data.status !== undefined ? res.data.status : 0
-  initAppMode.value = res.data.mode === 1 ? 'APP' : 'PC'
 
   loading.value = false
+}
+
+/* ========== 组件自动更新 ========== */
+
+/** 遍历 project JSON，找到所有 component-instance 的 ID，批量拉取最新内容并注入 */
+async function injectLatestComponents(data) {
+  const ids = collectComponentIds(data)
+  console.log('[debug] injectLatestComponents: found component-instance ids =', ids)
+  if (ids.length === 0) return
+
+  const res = await curl({
+    method: 'get',
+    url: '/api/page/content/list',
+    query: { type: 'component', ids: ids.join(','), size: 1000 },
+  })
+  console.log('[debug] injectLatestComponents: API response success =', res?.success, 'data count =', res?.data?.length)
+  if (!res?.success || !res.data) return
+
+  const contentMap = {}
+  res.data.forEach(comp => {
+    console.log('[debug] injectLatestComponents: component id=' + comp.id + ' content_html length=' + (comp.content_html?.length || 0) + ' preview=' + (comp.content_html || '').slice(0, 80) + '... FULL=' + (comp.content_html || ''))
+    contentMap[comp.id] = comp.content_html || '<div style="padding:16px;color:#999;">组件内容为空</div>'
+  })
+  injectComponentContent(data, contentMap)
+}
+
+function collectComponentIds(data) {
+  const ids = []
+  function walk(node) {
+    if (!node || typeof node !== 'object') return
+    if (node.type === 'component-instance' && node.attributes?.['data-component-id']) {
+      ids.push(node.attributes['data-component-id'])
+      return
+    }
+    if (Array.isArray(node.components)) {
+      node.components.forEach(walk)
+    }
+  }
+  if (data.pages) {
+    data.pages.forEach(page => {
+      if (page.frames) {
+        page.frames.forEach(frame => {
+          if (frame.component) walk(frame.component)
+        })
+      }
+    })
+  }
+  return ids
+}
+
+function injectComponentContent(data, contentMap) {
+  function walk(node) {
+    if (!node || typeof node !== 'object') return
+    if (node.type === 'component-instance') {
+      const cid = node.attributes?.['data-component-id']
+      if (cid && contentMap[cid]) {
+        node.components = [contentMap[cid]]
+      } else {
+        // 组件已删除或不存在
+        node.components = ['<div style="padding:16px;color:#999;">组件内容不可用</div>']
+      }
+      return
+    }
+    if (Array.isArray(node.components)) {
+      node.components.forEach(walk)
+    }
+  }
+  if (data.pages) {
+    data.pages.forEach(page => {
+      if (page.frames) {
+        page.frames.forEach(frame => {
+          if (frame.component) walk(frame.component)
+        })
+      }
+    })
+  }
 }
 
 onMounted(() => {
@@ -96,7 +176,6 @@ const handleSave = async ({ pageId: id, title, description, status, mode, conten
       pageTitle.value = title
       pageDescription.value = description
       pageStatus.value = status
-      initAppMode.value = mode === 1 ? 'APP' : 'PC'
       ElMessage.success('保存成功')
     } else {
       ElMessage.error('保存失败')
@@ -112,7 +191,6 @@ const handleSave = async ({ pageId: id, title, description, status, mode, conten
       pageTitle.value = title
       pageDescription.value = description
       pageStatus.value = status
-      initAppMode.value = mode === 1 ? 'APP' : 'PC'
       ElMessage.success('创建成功')
     } else {
       ElMessage.error('创建失败')

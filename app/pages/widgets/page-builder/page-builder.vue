@@ -5,8 +5,7 @@
       <el-button @click="goBack">← 返回</el-button>
       <span class="page-title">落地页编辑器</span>
       <el-button @click="clearCanvas">清空画布</el-button>
-      <el-button @click="exportHtml">导出 HTML</el-button>
-      <el-button v-if="editorType === 'component' && pageId" @click="handleSync">同步引用</el-button>
+      <el-button v-if="editorType === 'page'" @click="exportHtml">导出 HTML</el-button>
       <el-button @click="toggleTheme">{{ isLightTheme ? '☀' : '☾' }}</el-button>
       <el-button type="primary" @click="handleSave">保存</el-button>
     </div>
@@ -23,12 +22,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 import grapesjs from 'grapesjs'
 import 'grapesjs/dist/css/grapes.min.css'
 import './theme-light.css'
-import { inlineStyles, wrapPcContainer, getFlexibleScript } from './util/html-utils'
+import { inlineStyles, wrapPcContainer } from './util/html-utils'
 import getBlocks from './blocks.js'
 import getStyleManager from './style-manager'
 import getLocaleConfig from './locales'
@@ -42,9 +41,8 @@ import curl from '$common/curl.js'
 const props = defineProps({
   pageId:     { type: [Number, String], default: null },
   initData:   { type: Object, default: null },
-  canvasMode: { type: String, default: 'PC' },
-  lang:       { type: String, default: 'zh_CN' }, // zh_CN | zh_HK | en_US
-  editorType: { type: String, default: 'page' },  // page | component
+  lang:       { type: String, default: 'zh_CN' },
+  editorType: { type: String, default: 'page' },
 })
 
 const emit = defineEmits(['save', 'back'])
@@ -65,12 +63,8 @@ function toggleTheme() {
   editorContainer.value?.classList.toggle('theme-light', isLightTheme.value)
 }
 
-/** PC 使用 desktop 设备，APP 用自定义 375px 设备 */
-const CANVAS_WIDTH = { PC: 'desktop', APP: 'mobile-app' }
-const gjsDevice = computed(() => CANVAS_WIDTH[props.canvasMode] || CANVAS_WIDTH.PC)
-
-/** APP 模式使用的自定义设备定义 */
-const appDeviceDef = { id: 'mobile-app', name: '手机', width: '375px' }
+/** 使用 desktop 设备 */
+const gjsDevice = 'desktop'
 
 /* ========== 富文本弹窗 ========== */
 
@@ -92,11 +86,8 @@ function initSetting() {
     fromElement: false,
     height: '100%',
     i18n: getLocaleConfig(props.lang),
-    device: gjsDevice.value,
+    device: gjsDevice,
     showDevices: false,
-    deviceManager: {
-      devices: props.canvasMode === 'APP' ? [appDeviceDef] : [],
-    },
     styleManager: getStyleManager(props.lang),
     selectorManager: { componentFirst: true },
     layerManager: { appendTo: '.layers-container' },
@@ -121,6 +112,20 @@ function registerLayoutComponent() {
         name: '自由块',
         draggable: true,
         style: { minHeight: '64px' },
+      },
+    },
+  })
+  // 覆盖默认 image 类型，配置 resize 行为
+  editor.DomComponents.addType('image', {
+    extend: 'image',
+    model: {
+      defaults: {
+        resizable: {
+          keyWidth: 'width',
+          keyHeight: 'height',
+          handlers: ['se', 'e', 's', 'ne', 'nw', 'sw'],
+          min_dim: 20,
+        },
       },
     },
   })
@@ -179,8 +184,8 @@ function setupTraits() {
   editor.on('component:create', (component) => {
     if (component.get('type') === 'image') {
       component.set('traits', [
-        { type: 'text', name: 'src', label: '图片 URL' },
-        { type: 'text', name: 'alt', label: '描述' },
+        { type: 'text', name: 'src', label: '图片 URL', changeProp: 1 },
+        { type: 'text', name: 'alt', label: '描述', changeProp: 1 },
       ])
     }
   })
@@ -209,8 +214,6 @@ onMounted(async () => {
   registerLayoutComponent()
   // 注册 BLock
   registerCustomBlocks()
-  // 注册自定义组件模块 block
-  registerCustomComponentBlocks()
   // 隐藏布局管理器按钮（业务人员不需要）
   editor.Panels.removeButton('views', 'open-layers')
   // 再初始化富文本（注册 editable-text 类型、命令、事件）
@@ -239,24 +242,58 @@ function loadPageData(data) {
 
 defineExpose({ loadPageData })
 
+/* ========== 组件实例引用处理 ========== */
+
+/** 递归遍历 component 树，剥离 component-instance 的子内容（保存引用而非快照） */
+function stripComponentInstances(data) {
+  function walk(node) {
+    if (!node || typeof node !== 'object') return
+    if (node.type === 'component-instance') {
+      node.components = []
+      return
+    }
+    if (Array.isArray(node.components)) {
+      node.components.forEach(walk)
+    }
+  }
+  if (data?.pages) {
+    data.pages.forEach(page => {
+      if (page.frames) {
+        page.frames.forEach(frame => {
+          if (frame.component) walk(frame.component)
+        })
+      }
+    })
+  }
+}
+
 /* ========== Save ========== */
 
 function handleSave() {
   if (!editor) return
 
   const projectData = editor.getProjectData()
+  // 剥离 component-instance 子内容，只保留引用 ID
+  stripComponentInstances(projectData)
+
   const html = editor.getHtml()
   const fullCss = editor.getCss()
-  let inlined = inlineStyles(html, fullCss)
-
-  // PC 页面：外层包裹自适应容器（组件类型不包裹，保持纯净 HTML）
-  if (props.canvasMode !== 'APP' && props.editorType === 'page') {
+  console.log('html', html)
+  console.log('fullCss', fullCss)
+  // 组件：剥离 <body> 包裹 + 内联样式，确保内容独立完整
+  // 页面：内联样式后包裹自适应容器
+  let inlined
+  if (props.editorType === 'component') {
+    inlined = inlineStyles(html, fullCss)
+  } else {
+    inlined = inlineStyles(html, fullCss)
     inlined = wrapPcContainer(inlined)
   }
-
+  console.log('inlined..', inlined)
+  // return
   emit('save', {
     pageId: props.pageId,
-    mode: props.canvasMode === 'APP' ? 1 : 0,
+    mode: 0,
     content_json: JSON.stringify(projectData),
     content_html: inlined,
   })
@@ -268,33 +305,17 @@ function exportHtml() {
   if (!editor) return
   const html = editor.getHtml()
   const fullCss = editor.getCss()
-  console.log('getHtml:', html)
-  console.log('getCss:', fullCss)
   let inlined = inlineStyles(html, fullCss)
 
-  const headItems = ['  <meta charset="UTF-8">']
-
-  if (props.canvasMode === 'APP') {
-    // APP 模式：block 已使用 rem，注入视口缩放脚本
-    inlined = '<div id="app-root">\n' + inlined + '\n</div>'
-    headItems.push(
-      '  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">',
-      '  <style>html,body{margin:0;padding:0;} body{font-size:16px;}</style>',
-      getFlexibleScript(375),
-    )
-  } else {
-    // PC 模式：外层包裹自适应容器
-    inlined = wrapPcContainer(inlined)
-    headItems.push(
-      '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-    )
-  }
+  // 外层包裹自适应容器
+  inlined = wrapPcContainer(inlined)
 
   const fullHtml = [
     '<!DOCTYPE html>',
     '<html lang="zh-CN">',
     '<head>',
-    ...headItems,
+    '  <meta charset="UTF-8">',
+    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
     '</head>',
     '<body>',
     inlined,
