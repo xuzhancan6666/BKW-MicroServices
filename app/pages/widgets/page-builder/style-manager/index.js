@@ -14,17 +14,46 @@ export default function getStyleManager(lang) {
         open: true,
         buildProps: ['width', 'height', 'padding', 'margin'],
         properties: [
-          { property: 'width',   units: ['px'], defaults: 'auto' },
-          { property: 'height',  units: ['px'], defaults: 'auto' },
-          { property: 'padding', units: ['px'], defaults: '0' },
-          { property: 'margin',  units: ['px'], defaults: '0' },
+          { property: 'width',   defaults: 'auto' },
+          { property: 'height',  defaults: 'auto' },
+          { property: 'padding', defaults: '0' },
+          { property: 'margin',  defaults: '0' },
         ],
       },
       {
         name: l.appearance,
         open: false,
-        buildProps: ['background-color', 'border-radius', 'font-size', 'color', 'text-align', 'line-height'],
+        buildProps: ['background-color', 'background-image', 'background-size', 'background-repeat', 'border-radius', 'font-size', 'color', 'text-align', 'line-height'],
         properties: [
+          {
+            property: 'background-image',
+            type: 'file',
+            label: '背景图',
+          },
+          {
+            property: 'background-size',
+            type: 'select',
+            label: '背景填充',
+            defaults: 'cover',
+            options: [
+              { value: 'cover', name: '铺满' },
+              { value: 'contain', name: '包含' },
+              { value: 'auto', name: '自动' },
+              { value: '100% 100%', name: '拉伸' },
+            ],
+          },
+          {
+            property: 'background-repeat',
+            type: 'select',
+            label: '重复',
+            defaults: 'no-repeat',
+            options: [
+              { value: 'no-repeat', name: '不重复' },
+              { value: 'repeat', name: '平铺' },
+              { value: 'repeat-x', name: '横向重复' },
+              { value: 'repeat-y', name: '纵向重复' },
+            ],
+          },
           {
             property: 'font-size',
             type: 'select',

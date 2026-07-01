@@ -111,6 +111,12 @@ function registerLayoutComponent() {
       defaults: {
         name: '自由块',
         draggable: true,
+        resizable: {
+          keyWidth: 'width',
+          keyHeight: 'height',
+          handlers: ['se', 'e', 's', 'ne', 'nw', 'sw'],
+          min_dim: 20,
+        },
         style: { minHeight: '64px' },
       },
     },
