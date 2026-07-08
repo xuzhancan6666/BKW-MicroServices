@@ -1,33 +1,34 @@
 <template>
     <div class="content">
-        <el-button @click="go">Editor。。</el-button>
-        <el-button @click="send">send。。。</el-button>
+        <el-button @click="go" :disabled="!!heartBeat && connected">Editor。。</el-button>
+        <el-button @click="send" :disabled="!connected">send。。。</el-button>
+        <el-button @click="stop" :disabled="!connected">stop..</el-button>
     </div>
 </template>
 <script setup>
 import { ref } from 'vue'
-const bWindow = ref(null)
+import HeartBeat from '../../../common/heart-beat';
+let heartBeat = null
+const connected = ref(false)
+
 function go() {
-    // 打开 B
-    bWindow.value = window.open('http://localhost:8090/?type=app&id=1&tenant=1&pageid=1');
-
-    // 等待 B 加载完成后再发送（监听 B 发来的“ready”信号更稳妥）
-    bWindow.value.addEventListener('load', () => {
-    bWindow.value.postMessage({ type: 'GREET', text: 'Hello from A' }, 'http://localhost:8090');
-    });
+    if (heartBeat) heartBeat.stop()
+    heartBeat = HeartBeat.open('http://localhost:4000/?type=app&id=1&tenant=1&pageid=1', {
+        windowName: 'editor-agent',
+        onOnline: () => connected.value = true,
+        onOffline: () => connected.value = false,
+    })
 }
-
-// 接收 B 发来的消息
-window.addEventListener('message', (event) => {
-// 必须校验消息来源
-if (event.origin !== 'http://localhost:8090') return;
-    console.log('A 收到消息：', event, event.data);
-});  
 
 function send() {
-    bWindow.value.postMessage({ type: 'Fuck..', text: 'Fuck from A' }, 'http://localhost:8090');
+    heartBeat?.sendMessage({type: '666666', message: '777'})
 }
 
+function stop() {
+    heartBeat?.stop()
+    heartBeat = null
+    connected.value = false
+}
 </script>
 <style lang="less" scoped>
 
