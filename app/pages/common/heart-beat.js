@@ -5,10 +5,7 @@
  */
 class HeartBeat {
     constructor(options = {}) {
-        // 目标地址
-        this.targetOrigin = options.targetOrigin
-        // 打开window
-        this.targetWindow = options.targetWindow
+        this.windowName = options.windowName
         this.STATUS = 'OFF'
         // 心跳间隔
         this.HEARTBEAT_INTERVAL = options.HEARTBEAT_INTERVAL || 3 * 1000
@@ -17,23 +14,21 @@ class HeartBeat {
         this.onOnline = options.onOnline || (() => {})
         this.onOffline = options.onOffline || (() => {})
 
+        this.targetOrigin = null
+        this.targetWindow = null
         this.st_sign = null
         this.pingTimer = null
         this.checkTimer = null
     }
 
-	// 打开子窗口并建立心跳。
-    // 提供一个静态类方法。用于直接open。
-	static open(url, options = {}) {
-	  const targetWindow = window.open(url)
-	  const hb = new HeartBeat({
-	    ...options,
-	    targetOrigin: options.targetOrigin || new URL(url, location.origin).origin,
-	    targetWindow,
-	  })
-	  hb.start()
-	  return hb
-	}
+    // 打开子窗口并建立心跳。
+    open(url, options = {}) {
+        const targetWindow = window.open(url, this.windowName || '_blank')
+        this.targetWindow = targetWindow
+        this.targetOrigin = options.targetOrigin || new URL(url, location.origin).origin
+        this.start()
+        return this
+    }
 
     // 启动方法。
     start() {

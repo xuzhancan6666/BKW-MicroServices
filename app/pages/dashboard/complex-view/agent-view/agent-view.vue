@@ -13,11 +13,12 @@ const connected = ref(false)
 
 function go() {
     if (heartBeat) heartBeat.stop()
-    heartBeat = HeartBeat.open('http://localhost:4000/?type=app&id=1&tenant=1&pageid=1', {
+    heartBeat = new HeartBeat({
         windowName: 'editor-agent',
         onOnline: () => connected.value = true,
         onOffline: () => connected.value = false,
     })
+    heartBeat.open('http://localhost:4000/?type=app&id=1&tenant=1&pageid=1')
 }
 
 function send() {
