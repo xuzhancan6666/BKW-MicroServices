@@ -14,6 +14,12 @@ export function registerComponentInstanceType(editor) {
         stylable: false,
         highlightable: false,
         copyable: false,
+        resizable: {
+          keyWidth: 'width',
+          keyHeight: 'height',
+          handlers: ['se', 'e', 's', 'ne', 'nw', 'sw'],
+          min_dim: 20,
+        },
         style: { width: '100%' },
       },
     },

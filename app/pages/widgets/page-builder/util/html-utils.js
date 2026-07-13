@@ -100,7 +100,7 @@ export function convertPxToRem(css, baseFontSize = 16) {
  * 为导出的 HTML 片段添加 PC 端自适应容器
  */
 export function wrapPcContainer(html) {
-  return '<div class="page-container" style="width:100%;max-width:1200px;margin:0 auto;padding:0 1rem;box-sizing:border-box;">\n' + html + '\n</div>'
+  return '<div class="page-container" style="width:100%;margin:0 auto;padding:0 1rem;box-sizing:border-box;">\n' + html + '\n</div>'
 }
 
 /**
