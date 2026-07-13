@@ -27,8 +27,10 @@ import { ElMessage } from 'element-plus'
 import grapesjs from 'grapesjs'
 import 'grapesjs/dist/css/grapes.min.css'
 import './theme-light.css'
-import { inlineStyles, wrapPcContainer } from './util/html-utils'
-import getBlocks from './blocks.js'
+import { inlineStyles, wrapPcContainer, buildExportHtml } from './util/html-utils'
+import getBlocks from './blocks/blocks.js'
+import { registerElementBlockTypes } from './blocks/element-ui/index.js'
+import { registerNavMenuType } from './widgets/nav-menu/index.js'
 import getStyleManager from './style-manager'
 import getLocaleConfig from './locales'
 import RichTextModal from './widgets/rich-text/rich-text-modal.vue'
@@ -218,6 +220,8 @@ onMounted(async () => {
   initEditor()
   // 先注册基础组件类型
   registerLayoutComponent()
+  registerNavMenuType(editor)
+  registerElementBlockTypes(editor)
   // 注册 BLock
   registerCustomBlocks()
   // 隐藏布局管理器按钮（业务人员不需要）
@@ -295,6 +299,11 @@ function handleSave() {
     inlined = inlineStyles(html, fullCss)
     inlined = wrapPcContainer(inlined)
   }
+  // ElementPlus blocks 使用属性选择器和 :hover 等伪类，inlineStyles 无法处理，
+  // 需额外保留 <style> 标签确保保存后交互样式完整
+  if (fullCss) {
+    inlined = '<style>\n' + fullCss + '\n</style>\n' + inlined
+  }
   console.log('inlined..', inlined)
   // return
   emit('save', {
@@ -309,26 +318,13 @@ function handleSave() {
 
 function exportHtml() {
   if (!editor) return
-  const html = editor.getHtml()
-  const fullCss = editor.getCss()
-  let inlined = inlineStyles(html, fullCss)
-
-  // 外层包裹自适应容器
-  inlined = wrapPcContainer(inlined)
-
-  const fullHtml = [
-    '<!DOCTYPE html>',
-    '<html lang="zh-CN">',
-    '<head>',
-    '  <meta charset="UTF-8">',
-    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
-    '</head>',
-    '<body>',
-    inlined,
-    '</body>',
-    '</html>',
-  ].join('\n')
-  const blob = new Blob([fullHtml], { type: 'text/html' })
+  const fullHtml = buildExportHtml({
+    html: editor.getHtml(),
+    css: editor.getCss(),
+    js: editor.getJs(),
+    editorType: props.editorType,
+  })
+  const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url

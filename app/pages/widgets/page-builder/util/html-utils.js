@@ -135,3 +135,56 @@ export function getFlexibleScript(designWidth, maxWidth, baseFontSize) {
     '})()\n' +
     '</script>'
 }
+
+/**
+ * 构建完整的导出 HTML 文档
+ *
+ * 处理流程：
+ *   1. 剥离 getHtml() 自带的 &lt;script&gt;（jsInHtml 默认 true）
+ *   2. 内联 GrapesJS 的 ID 选择器样式到元素上
+ *   3. 页面类型包裹自适应容器
+ *   4. 组装完整 HTML：CSS Reset + &lt;style&gt; 兜底 + 内联内容 + JS 交互脚本
+ *
+ * @param {object} opts
+ * @param {string} opts.html       GrapesJS editor.getHtml()
+ * @param {string} opts.css        GrapesJS editor.getCss()
+ * @param {string} [opts.js]       GrapesJS editor.getJs()
+ * @param {string} [opts.editorType]  'page' | 'component', 默认 'page'
+ * @returns {string}  完整的 HTML 文档
+ */
+export function buildExportHtml({ html, css, js, editorType = 'page' } = {}) {
+  if (!html) return ''
+
+  // 1. 剥离 getHtml() 自动追加的 &lt;script&gt;，单独放在 body 末尾
+  const cleanHtml = html.replace(/<script>[\s\S]*?<\/script>/g, '')
+
+  // 2. 内联 ID 选择器样式
+  let inlined = inlineStyles(cleanHtml, css)
+
+  // 3. 页面类型包裹自适应容器
+  if (editorType !== 'component') {
+    inlined = wrapPcContainer(inlined)
+  }
+
+  // 4. 构建各标签
+  const styleTag = css ? '<style>\n' + css + '\n</style>' : ''
+  const jsTag = js ? '<script>\n' + js + '\n<' + '/script>' : ''
+  const resetTag = '<style>\n  * { margin: 0; padding: 0; box-sizing: border-box; }\n</style>'
+
+  // 5. 组装完整文档
+  return [
+    '<!DOCTYPE html>',
+    '<html lang="zh-CN">',
+    '<head>',
+    '  <meta charset="UTF-8">',
+    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    resetTag,
+    styleTag,
+    '</head>',
+    '<body>',
+    inlined,
+    jsTag,
+    '</body>',
+    '</html>',
+  ].join('\n')
+}

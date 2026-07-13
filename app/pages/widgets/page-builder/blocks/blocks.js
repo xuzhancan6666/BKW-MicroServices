@@ -1,7 +1,10 @@
 /**
- * blocks.js — 所有自定义 block 定义
+ * blocks/blocks.js — 所有自定义 block 定义
  * 编辑器内统一使用 px 单位，APP 导出时由导出函数做 px→rem 转换
  */
+
+import { getNavMenuBlocks } from '../widgets/nav-menu/index.js'
+import { getElementBlocks } from './element-ui/index.js'
 
 const px = (v) => {
   return v + 'px'
@@ -79,5 +82,12 @@ const components = () => [
 ]
 
 export default function getBlocks() {
-  return [...layout(), ...text(), ...media(), ...components()]
+  return [
+    ...layout(),
+    ...text(),
+    ...media(),
+    ...components(),
+    ...getNavMenuBlocks(),
+    ...getElementBlocks(),
+  ]
 }
