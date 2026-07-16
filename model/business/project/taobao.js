@@ -1,6 +1,6 @@
 module.exports = {
    name: '淘宝',
-   desc: '淘宝电商系统',
+   desc: '淘宝',
    homePage: '/todo?project_key=taobao&menu_key=product',
    menu: [
    {

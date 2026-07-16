@@ -24,14 +24,14 @@ export function getLinkBlocks() {
       label: '链接',
       category: '通用组件',
       content: `<style>
-[data-gjs-type="el-link"]{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
-[data-gjs-type="el-link"] .el-link-item{display:inline-flex;align-items:center;gap:${px(6)};font-size:${px(14)};cursor:pointer;text-decoration:none;transition:color .15s,opacity .15s;user-select:none}
-[data-gjs-type="el-link"] .el-link-item:hover{color:${C.primary};text-decoration:underline}
-[data-gjs-type="el-link"] .el-link-item.is-underline:hover{text-decoration:underline}
-[data-gjs-type="el-link"] .el-link-item.is-disabled{color:${C.textTertiary}!important;cursor:not-allowed;text-decoration:none!important}
-[data-gjs-type="el-link"] .el-link-item.is-disabled:hover{color:${C.textTertiary}!important;text-decoration:none!important}
+.el-links-root{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
+.el-links-root .el-link-item{display:inline-flex;align-items:center;gap:${px(6)};font-size:${px(14)};cursor:pointer;text-decoration:none;transition:color .15s,opacity .15s;user-select:none}
+.el-links-root .el-link-item:hover{color:${C.primary};text-decoration:underline}
+.el-links-root .el-link-item.is-underline:hover{text-decoration:underline}
+.el-links-root .el-link-item.is-disabled{color:${C.textTertiary}!important;cursor:not-allowed;text-decoration:none!important}
+.el-links-root .el-link-item.is-disabled:hover{color:${C.textTertiary}!important;text-decoration:none!important}
 </style>
-<div data-gjs-type="el-link" style="display:flex;align-items:center;gap:${px(20)};flex-wrap:wrap;padding:${px(8)} 0;">
+<div data-gjs-type="el-link" class="el-links-root" style="display:flex;align-items:center;gap:${px(20)};flex-wrap:wrap;padding:${px(8)} 0;">
   <a class="el-link-item" style="color:${C.primary};">🔗 默认链接</a>
   <a class="el-link-item is-underline" style="color:${C.success};text-decoration:underline;">✅ 带下划线</a>
   <a class="el-link-item" style="color:${C.warning};">⚠️ 警告链接</a>

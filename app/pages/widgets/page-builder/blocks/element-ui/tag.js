@@ -32,14 +32,14 @@ export function getTagBlocks() {
       label: '标签',
       category: '通用组件',
       content: `<style>
-[data-gjs-type="el-tag"]{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
-[data-gjs-type="el-tag"] .el-tag-item{display:inline-flex;align-items:center;gap:${px(4)};height:${px(26)};padding:0 ${px(10)};font-size:${px(12)};border-radius:${px(4)};white-space:nowrap;cursor:default;transition:transform .15s,box-shadow .15s;user-select:none}
-[data-gjs-type="el-tag"] .el-tag-item:hover{transform:scale(1.06);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-[data-gjs-type="el-tag"] .el-tag-item.is-hit{border-color:${C.borderPrimary}}
-[data-gjs-type="el-tag"] .el-tag-close{margin-left:${px(4)};font-size:${px(14)};cursor:pointer;opacity:0.6;line-height:1}
-[data-gjs-type="el-tag"] .el-tag-close:hover{opacity:1}
+.el-tags-root{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
+.el-tags-root .el-tag-item{display:inline-flex;align-items:center;gap:${px(4)};height:${px(26)};padding:0 ${px(10)};font-size:${px(12)};border-radius:${px(4)};white-space:nowrap;cursor:default;transition:transform .15s,box-shadow .15s;user-select:none}
+.el-tags-root .el-tag-item:hover{transform:scale(1.06);box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.el-tags-root .el-tag-item.is-hit{border-color:${C.borderPrimary}}
+.el-tags-root .el-tag-close{margin-left:${px(4)};font-size:${px(14)};cursor:pointer;opacity:0.6;line-height:1}
+.el-tags-root .el-tag-close:hover{opacity:1}
 </style>
-<div data-gjs-type="el-tag" style="display:flex;gap:${px(8)};flex-wrap:wrap;padding:${px(8)} 0;">
+<div data-gjs-type="el-tag" class="el-tags-root" style="display:flex;gap:${px(8)};flex-wrap:wrap;padding:${px(8)} 0;">
   <span class="el-tag-item" style="background:${C.bgPrimary};color:${C.primary};border:1px solid ${C.borderPrimary};">基金</span>
   <span class="el-tag-item" style="background:${C.bgSuccess};color:${C.success};border:1px solid ${C.borderSuccess};">债券</span>
   <span class="el-tag-item" style="background:${C.bgWarning};color:${C.warning};border:1px solid ${C.borderWarning};">外汇</span>

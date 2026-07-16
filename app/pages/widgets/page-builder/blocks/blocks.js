@@ -1,15 +1,13 @@
 /**
  * blocks/blocks.js — 所有自定义 block 定义
- * 编辑器内统一使用 px 单位，APP 导出时由导出函数做 px→rem 转换
  */
 
 import { getNavMenuBlocks } from '../widgets/nav-menu/index.js'
 import { getElementBlocks } from './element-ui/index.js'
 
-const px = (v) => {
-  return v + 'px'
-}
+const px = (v) => v + 'px'
 
+/* ===== 布局 ===== */
 const layout = () => [
   {
     id: 'layout-resizable',
@@ -39,6 +37,7 @@ const layout = () => [
   },
 ]
 
+/* ===== 文本 ===== */
 const text = () => {
   const base = {
     h1: `font-size:${px(22)};font-weight:700;color:#333;margin:0 0 ${px(8)};padding:0;`,
@@ -55,6 +54,7 @@ const text = () => {
   ]
 }
 
+/* ===== 媒体 ===== */
 const media = () => [
   {
     id: 'media-image', label: '图片', category: '媒体',
@@ -63,9 +63,10 @@ const media = () => [
   {
     id: 'media-video', label: '视频', category: '媒体',
     content: `<div data-gjs-type="video" data-video-source="yt" data-video-url="https://www.youtube.com/watch?v=placeholder" style="max-width:100%;"></div>`,
-  }
+  },
 ]
 
+/* ===== 组件 ===== */
 const components = () => [
   {
     id: 'comp-editable-text', label: '富文本块', category: '组件',

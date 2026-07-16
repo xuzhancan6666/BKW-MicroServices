@@ -25,16 +25,16 @@ export function getStepsBlocks() {
       label: '步骤条',
       category: '数据展示',
       content: `<style>
-[data-gjs-type="el-steps"]{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
-[data-gjs-type="el-steps"] .el-step{flex:1;text-align:center;position:relative}
-[data-gjs-type="el-steps"] .el-step-circle{width:${px(32)};height:${px(32)};line-height:${px(32)};border-radius:50%;display:inline-block;font-size:${px(14)};font-weight:700;transition:transform .2s,box-shadow .2s;cursor:default}
-[data-gjs-type="el-steps"] .el-step-circle:hover{transform:scale(1.12);box-shadow:0 0 0 4px rgba(64,158,255,0.2)}
-[data-gjs-type="el-steps"] .el-step-circle.is-default:hover{box-shadow:0 0 0 4px rgba(144,147,153,0.12)}
-[data-gjs-type="el-steps"] .el-step-connector{flex:0 0 ${px(60)};height:1px;align-self:flex-start;margin-top:${px(16)}}
-[data-gjs-type="el-steps"] .el-step-title{font-size:${px(14)};font-weight:600;margin-top:${px(10)}}
-[data-gjs-type="el-steps"] .el-step-desc{font-size:${px(12)};color:${C.textTertiary};margin-top:${px(4)};line-height:1.4}
+.el-steps-root{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
+.el-steps-root .el-step{flex:1;text-align:center;position:relative}
+.el-steps-root .el-step-circle{width:${px(32)};height:${px(32)};line-height:${px(32)};border-radius:50%;display:inline-block;font-size:${px(14)};font-weight:700;transition:transform .2s,box-shadow .2s;cursor:default}
+.el-steps-root .el-step-circle:hover{transform:scale(1.12);box-shadow:0 0 0 4px rgba(64,158,255,0.2)}
+.el-steps-root .el-step-circle.is-default:hover{box-shadow:0 0 0 4px rgba(144,147,153,0.12)}
+.el-steps-root .el-step-connector{flex:0 0 ${px(60)};height:1px;align-self:flex-start;margin-top:${px(16)}}
+.el-steps-root .el-step-title{font-size:${px(14)};font-weight:600;margin-top:${px(10)}}
+.el-steps-root .el-step-desc{font-size:${px(12)};color:${C.textTertiary};margin-top:${px(4)};line-height:1.4}
 </style>
-<div data-gjs-type="el-steps" style="display:flex;align-items:flex-start;padding:${px(32)} ${px(24)};background:${C.bgWhite};border-radius:${C.radius};">
+<div data-gjs-type="el-steps" class="el-steps-root" style="display:flex;align-items:flex-start;padding:${px(32)} ${px(24)};background:${C.bgWhite};border-radius:${C.radius};">
   <div class="el-step">
     <div class="el-step-circle" style="background:${C.primary};color:#fff;">1</div>
     <div class="el-step-title" style="color:${C.primary};">申请</div>

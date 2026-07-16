@@ -1,6 +1,6 @@
 module.exports = {
    name: 'pdd',
-   desc: 'pdd电商系统',
+   desc: 'pdd',
    homePage: '/todo?project_key=pdd&menu_key=product',
    menu: [{
       key: 'product',

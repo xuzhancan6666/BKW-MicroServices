@@ -43,6 +43,7 @@
     "generate-password": "^1.7.1",
     "glob": "^7.1.4",
     "grapesjs": "^0.22.16",
+    "grapesjs-navbar": "^1.0.2",
     "grapesjs-preset-webpage": "^1.0.3",
     "icons-vue": "^1.0.9",
     "jsonwebtoken": "^9.0.2",

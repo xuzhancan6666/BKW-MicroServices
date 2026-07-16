@@ -1,6 +1,15 @@
 /**
- * menu.js — 横向菜单 / 纵向菜单
- * ElementUI NavMenu 风格
+ * menu.js — 横向导航菜单（支持二级子菜单）
+ * 交互参考 ElementUI el-menu 风格
+ *
+ * 组件层级：
+ *   el-menu（根容器）
+ *     └── el-menu-item（一级菜单，可包含子 el-menu-item）
+ *
+ * 交互：
+ *   一级菜单点击 → 展开/收起子菜单（is-expanded）
+ *   子菜单项点击 → 切换 active 高亮，收起父级下拉
+ *   点击其他区域 → 收起所有展开的子菜单
  */
 
 const px = (v) => v + 'px'
@@ -9,68 +18,379 @@ const C = {
   primary: '#409eff',
   primaryLight: '#ecf5ff',
   text: '#303133',
-  textSecondary: '#606266',
-  textTertiary: '#909399',
-  border: '#e4e7ed',
-  borderDark: '#dcdfe6',
-  bg: '#f5f7fa',
-  bgWhite: '#fff',
-  radius: '4px',
+  borderLight: '#e4e7ed',
 }
+
+const menuStyle = `
+.el-menu-root{display:flex;align-items:stretch;flex-wrap:wrap;width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box;user-select:none;border-bottom:${px(2)} solid ${C.borderLight}}
+.el-menu-root .el-menu-item{position:relative}
+.el-menu-root .el-menu-item__content{display:inline-flex;align-items:center;gap:${px(4)};padding:${px(0)} ${px(20)};height:${px(56)};font-size:${px(14)};color:${C.text};cursor:pointer;transition:color .15s,border-bottom-color .15s;white-space:nowrap;border-bottom:${px(2)} solid transparent;margin-bottom:-${px(2)};box-sizing:border-box;text-decoration:none;pointer-events:none}
+.el-menu-root .el-menu-item__content *{pointer-events:none}
+.el-menu-root .el-menu-item:hover>.el-menu-item__content{color:${C.primary};border-bottom-color:${C.primaryLight}}
+.el-menu-root .el-menu-item.is-active>.el-menu-item__content{color:${C.primary};border-bottom-color:${C.primary}}
+.el-menu-root .el-menu-item__arrow{font-size:${px(10)};margin-left:${px(2)};color:#999;transition:transform .2s;display:none}
+.el-menu-root .el-menu-item:has(>.el-menu-sub) .el-menu-item__arrow{display:inline-block}
+.el-menu-root .el-menu-item.is-expanded>.el-menu-item__content .el-menu-item__arrow{transform:rotate(180deg)}
+
+/* 子菜单 dropdown */
+.el-menu-root .el-menu-item>.el-menu-sub{position:absolute;top:100%;left:0;min-width:${px(160)};background:#fff;box-shadow:0 ${px(2)} ${px(12)} rgba(0,0,0,0.1);display:none;z-index:100;flex-direction:column;padding:${px(4)} 0}
+.el-menu-root .el-menu-item.is-expanded>.el-menu-sub{display:flex}
+.el-menu-root .el-menu-sub .el-menu-item{position:static;width:100%}
+.el-menu-root .el-menu-sub .el-menu-item__content{height:${px(36)};width:100%;border-bottom:none;margin-bottom:0;padding:${px(0)} ${px(16)};gap:0}
+.el-menu-root .el-menu-sub .el-menu-item:hover>.el-menu-item__content{color:${C.primary};background:${C.primaryLight};border-bottom:none}
+.el-menu-root .el-menu-sub .el-menu-item.is-active>.el-menu-item__content{color:${C.primary};background:${C.primaryLight};border-bottom:none}
+`
 
 export function getMenuBlocks() {
   return [
-    /* ===== 横向菜单 ===== */
     {
-      id: 'el-horizontal-menu',
+      id: 'el-menu-horizontal',
       label: '横向菜单',
-      category: '导航',
-      content: `<style>
-[data-gjs-type="el-horizontal-menu"]{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:${C.bgWhite};border-bottom:1px solid ${C.borderDark};user-select:none}
-[data-gjs-type="el-horizontal-menu"] .el-menu-bar{display:flex;align-items:stretch;max-width:1200px;margin:0 auto;}
-[data-gjs-type="el-horizontal-menu"] .el-menu-item{display:flex;align-items:center;gap:${px(4)};padding:0 ${px(20)};font-size:${px(14)};color:${C.textSecondary};text-decoration:none;border-bottom:2px solid transparent;cursor:pointer;transition:color .2s,border-color .2s,background .15s;white-space:nowrap;height:${px(56)}}
-[data-gjs-type="el-horizontal-menu"] .el-menu-item:hover{color:${C.primary};background:${C.primaryLight}}
-[data-gjs-type="el-horizontal-menu"] .el-menu-item.is-active{color:${C.primary};border-bottom-color:${C.primary};background:transparent;font-weight:600}
-[data-gjs-type="el-horizontal-menu"] .el-menu-item.is-active:hover{background:${C.primaryLight}}
-[data-gjs-type="el-horizontal-menu"] .el-submenu-indicator{margin-left:${px(4)};font-size:${px(10)};color:${C.textTertiary};transition:transform .2s}
-</style>
-<div data-gjs-type="el-horizontal-menu">
-  <div class="el-menu-bar">
-    <a class="el-menu-item is-active" style="color:${C.primary};border-bottom-color:${C.primary};font-weight:600;">首页</a>
-    <a class="el-menu-item">产品中心 <span class="el-submenu-indicator">▾</span></a>
-    <a class="el-menu-item">服务支持</a>
-    <a class="el-menu-item">关于我们</a>
-    <a class="el-menu-item">新闻资讯 <span class="el-submenu-indicator">▾</span></a>
-    <a class="el-menu-item">联系方式</a>
+      category: '菜单组件',
+      content: `<style>${menuStyle}</style>
+<div data-gjs-type="el-menu" class="el-menu-root" data-gjs-copyable="false" style="background:#fff;padding:${px(0)} ${px(16)};">
+  <div data-gjs-type="el-menu-item" class="el-menu-item is-active" data-url="" data-target="_blank">
+    <span class="el-menu-item__content"><span>首页</span><span class="el-menu-item__arrow">▾</span></span>
+  </div>
+  <div data-gjs-type="el-menu-item" class="el-menu-item" data-url="" data-target="_blank">
+    <span class="el-menu-item__content"><span>产品中心</span><span class="el-menu-item__arrow">▾</span></span>
+  </div>
+  <div data-gjs-type="el-menu-item" class="el-menu-item" data-url="" data-target="_blank">
+    <span class="el-menu-item__content"><span>关于我们</span><span class="el-menu-item__arrow">▾</span></span>
+  </div>
+  <div data-gjs-type="el-menu-item" class="el-menu-item" data-url="" data-target="_blank">
+    <span class="el-menu-item__content"><span>客服中心</span><span class="el-menu-item__arrow">▾</span></span>
   </div>
 </div>`,
     },
-
-    /* ===== 纵向菜单 ===== */
-    {
-      id: 'el-vertical-menu',
-      label: '纵向菜单',
-      category: '导航',
-      content: `<style>
-[data-gjs-type="el-vertical-menu"]{width:${px(240)};font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:${C.bgWhite};border:1px solid ${C.borderDark};border-radius:${C.radius};overflow:hidden;user-select:none}
-[data-gjs-type="el-vertical-menu"] .el-menu-group-title{padding:${px(14)} ${px(20)} ${px(6)};font-size:${px(12)};color:${C.textTertiary};font-weight:600;text-transform:uppercase;letter-spacing:1px;}
-[data-gjs-type="el-vertical-menu"] .el-menu-item{display:flex;align-items:center;gap:${px(8)};padding:${px(12)} ${px(20)};font-size:${px(14)};color:${C.textSecondary};text-decoration:none;cursor:pointer;border-left:3px solid transparent;transition:background .15s,color .15s,border-color .15s;user-select:none}
-[data-gjs-type="el-vertical-menu"] .el-menu-item:hover{background:${C.primaryLight};color:${C.primary}}
-[data-gjs-type="el-vertical-menu"] .el-menu-item.is-active{background:${C.primaryLight};color:${C.primary};border-left-color:${C.primary};font-weight:600}
-[data-gjs-type="el-vertical-menu"] .el-menu-item .el-icon{display:inline-flex;width:${px(16)};justify-content:center;font-size:${px(16)};}
-</style>
-<div data-gjs-type="el-vertical-menu">
-  <div style="padding:${px(18)} ${px(20)};font-size:${px(15)};font-weight:700;color:${C.text};border-bottom:1px solid ${C.border};background:${C.bg};letter-spacing:1px;">系统导航</div>
-  <div class="el-menu-group-title">概览</div>
-  <a class="el-menu-item is-active" style="background:${C.primaryLight};color:${C.primary};border-left-color:${C.primary};font-weight:600;">📊 数据看板</a>
-  <a class="el-menu-item">📈 数据分析</a>
-  <div class="el-menu-group-title">业务</div>
-  <a class="el-menu-item">📦 产品管理</a>
-  <a class="el-menu-item">👥 客户管理</a>
-  <a class="el-menu-item">📄 订单管理</a>
-  <div class="el-menu-group-title">系统</div>
-  <a class="el-menu-item" style="border-bottom:none;">⚙️ 系统设置</a>
-</div>`,
-    },
   ]
+}
+
+export function registerMenuType(editor) {
+  editor.addStyle(menuStyle)
+
+  /* ===== el-menu-item 类型 ===== */
+  editor.DomComponents.addType('el-menu-item', {
+    isComponent(el) {
+      if (el.nodeType === 1 && el.classList.contains('el-menu-item')) {
+        return { type: 'el-menu-item' }
+      }
+    },
+    model: {
+      defaults: {
+        draggable: false,
+        traits: [
+          { type: 'button', label: '子菜单', text: '+ 新增子菜单', command: 'addSubmenuItem' },
+          { type: 'text', label: '菜单标题', name: 'menuTitle', changeProp: 1 },
+          { type: 'text', label: '链接地址', name: 'data-url', placeholder: 'https:// 或 /path' },
+          { type: 'select', label: '跳转方式', name: 'data-target', options: [
+            { value: '_self', name: '当前窗口' },
+            { value: '_blank', name: '新窗口' },
+          ]},
+        ],
+      },
+    },
+  })
+
+  /* ===== el-menu 根容器 ===== */
+  editor.DomComponents.addType('el-menu', {
+    isComponent(el) {
+      if (el.nodeType === 1 && el.classList.contains('el-menu-root')) {
+        return { type: 'el-menu' }
+      }
+    },
+    model: {
+      defaults: {
+        copyable: false,
+        traits: [
+          { type: 'button', label: '菜单项', text: '+ 新增菜单', command: 'addMenuItem' },
+        ],
+        script: function() {
+          // 编辑模式下不运行（canvas iframe 内）
+          try { if (window.frameElement !== null) return } catch(e) {}
+
+          var root = this;
+
+          root.addEventListener('click', function(e) {
+            var item = e.target.closest('.el-menu-item');
+            if (!item) return;
+
+            if (item.querySelector(':scope > .el-menu-sub')) {
+              // 一级菜单：切换展开
+              var expanded = item.classList.contains('is-expanded');
+              root.querySelectorAll('.el-menu-item.is-expanded').forEach(function(el) {
+                if (el !== item) el.classList.remove('is-expanded');
+              });
+              item.classList.toggle('is-expanded', !expanded);
+            } else {
+              // 子菜单项：设为 active，同时父级一级菜单也高亮
+              root.querySelectorAll('.el-menu-item.is-active').forEach(function(el) {
+                el.classList.remove('is-active');
+              });
+              item.classList.add('is-active');
+              var parent = item.parentElement && item.parentElement.closest('.el-menu-item');
+              if (parent) {
+                parent.classList.add('is-active');
+                parent.classList.remove('is-expanded');
+              }
+            }
+          });
+
+          // 点击外部收起所有子菜单
+          document.addEventListener('click', function(e) {
+            if (!e.target.closest('.el-menu-root')) {
+              document.querySelectorAll('.el-menu-item.is-expanded').forEach(function(el) {
+                el.classList.remove('is-expanded');
+              });
+            }
+          });
+        },
+      },
+    },
+  })
+
+  /* ===== 子菜单容器 ===== */
+  editor.DomComponents.addType('el-menu-sub', {
+    isComponent(el) {
+      if (el.nodeType === 1 && el.classList.contains('el-menu-sub')) {
+        return { type: 'el-menu-sub' }
+      }
+    },
+    model: {
+      defaults: {
+        draggable: false,
+        copyable: false,
+      },
+    },
+  })
+
+  /* ===== 新增子菜单命令 ===== */
+  editor.Commands.add('addSubmenuItem', {
+    run(editor) {
+      const selected = editor.getSelected()
+      if (!selected || selected.get('type') !== 'el-menu-item') return
+
+      // 确定新增目标
+      const parent = selected.parent()
+      const isLevel1 = parent && parent.get('type') === 'el-menu'
+      const target = isLevel1 ? selected : parent
+      if (!target) return
+
+      // 获取或创建 el-menu-sub 容器
+      let sub = target.components().find(c => c.get('type') === 'el-menu-sub')
+      if (!sub) {
+        sub = target.components().add('<div data-gjs-type="el-menu-sub" class="el-menu-sub"></div>')
+      }
+
+      // 新增子菜单项（只有 链接地址 + 跳转方式，无"新增子菜单"按钮）
+      const child = sub.components().add(
+        '<div data-gjs-type="el-menu-item" class="el-menu-item" data-url="" data-target="_blank">' +
+          '<span class="el-menu-item__content"><span>menu</span></span>' +
+        '</div>'
+      )
+      if (child) {
+        child.set('traits', [
+          { type: 'text', label: '菜单标题', name: 'menuTitle', changeProp: 1 },
+          { type: 'text', label: '链接地址', name: 'data-url', placeholder: 'https:// 或 /path' },
+          { type: 'select', label: '跳转方式', name: 'data-target', options: [
+            { value: '_self', name: '当前窗口' },
+            { value: '_blank', name: '新窗口' },
+          ]},
+        ])
+        child.set('menuTitle', 'menu')
+      }
+
+      // 自动展开父级
+      const el = target.getEl()
+      if (el) el.classList.add('is-expanded')
+
+      // 更新父级 traits（有子菜单时禁用链接相关）
+      updateTraitsBasedOnSubmenu(target)
+    },
+  })
+
+  /* ===== 新增根菜单命令 ===== */
+  editor.Commands.add('addMenuItem', {
+    run(editor) {
+      const selected = editor.getSelected()
+      if (!selected || selected.get('type') !== 'el-menu') return
+
+      // 创建一个新的一级菜单项（含完整 traits）
+      const newItem = selected.components().add(
+        '<div data-gjs-type="el-menu-item" class="el-menu-item" data-url="" data-target="_blank">' +
+          '<span class="el-menu-item__content"><span>menu</span><span class="el-menu-item__arrow">▾</span></span>' +
+        '</div>'
+      )
+      if (newItem) {
+        newItem.set('traits', [
+          { type: 'button', label: '子菜单', text: '+ 新增子菜单', command: 'addSubmenuItem' },
+          { type: 'text', label: '菜单标题', name: 'menuTitle', changeProp: 1 },
+          { type: 'text', label: '链接地址', name: 'data-url', placeholder: 'https:// 或 /path' },
+          { type: 'select', label: '跳转方式', name: 'data-target', options: [
+            { value: '_self', name: '当前窗口' },
+            { value: '_blank', name: '新窗口' },
+          ]},
+        ])
+        newItem.set('menuTitle', 'menu')
+        // 选中新增的菜单项
+        editor.select(newItem)
+      }
+    },
+  })
+
+  /* ===== 选中纠正 + 子菜单展开/收起 + active 切换 ===== */
+  let _selectGuard = false
+  editor.on('component:selected', (component) => {
+    if (_selectGuard) return
+
+    // 冒泡纠正：非 el-menu-item → 向上找到最近的 el-menu-item
+    if (component.get('type') !== 'el-menu-item') {
+      let p = component.parent()
+      while (p) {
+        if (p.get('type') === 'el-menu-item') {
+          _selectGuard = true
+          editor.select(p)
+          _selectGuard = false
+          return
+        }
+        p = p.parent()
+      }
+    }
+
+    // 选中的不是 el-menu-item 也不是 el-menu-sub → 收起所有子菜单
+    if (component.get('type') !== 'el-menu-item' && component.get('type') !== 'el-menu-sub') {
+      closeExpandedMenus()
+      return
+    }
+
+    if (component.get('type') === 'el-menu-item') {
+      const el = component.getEl()
+      if (!el) return
+      const root = el.closest('.el-menu-root')
+      if (!root) return
+
+      // 判断是否有子菜单（el-menu-sub 容器）
+      const hasChildren = component.components().some(c => c.get('type') === 'el-menu-sub')
+
+      if (hasChildren) {
+        // 一级菜单：切换 is-expanded，关闭同级其他展开项
+        const wasExpanded = el.classList.contains('is-expanded')
+        root.querySelectorAll('.el-menu-item.is-expanded').forEach((other) => {
+          if (other !== el) other.classList.remove('is-expanded')
+        })
+        closeExpandedMenus(el)
+
+        if (wasExpanded) {
+          el.classList.remove('is-expanded')
+        } else {
+          el.classList.add('is-expanded')
+        }
+      } else {
+        // 子菜单项或无子菜单的一级项：设为 active（编辑状态下不收起，方便编辑）
+        root.querySelectorAll('.el-menu-item.is-active').forEach((other) => {
+          other.classList.remove('is-active')
+        })
+        el.classList.add('is-active')
+        // 子菜单项选中时，父级一级菜单也高亮
+        if (el.closest('.el-menu-sub')) {
+          const parentItem = el.parentElement?.closest('.el-menu-item')
+          if (parentItem) parentItem.classList.add('is-active')
+        }
+      }
+    }
+  })
+
+  /* ===== 菜单标题同步到 DOM ===== */
+  editor.on('component:mount', (component) => {
+    if (component.get('type') === 'el-menu-item') {
+      if (!component.get('menuTitle')) {
+        const el = component.getEl()
+        const textSpan = el?.querySelector('.el-menu-item__content > span')
+        if (textSpan) component.set('menuTitle', textSpan.textContent)
+      }
+      // 加载已有数据时同步 traits（例如从保存的项目恢复）
+      updateTraitsBasedOnSubmenu(component)
+    }
+  })
+  editor.on('component:update:menuTitle', (component) => {
+    if (component.get('type') !== 'el-menu-item') return
+    const el = component.getEl()
+    const textSpan = el?.querySelector('.el-menu-item__content > span')
+    if (textSpan) textSpan.textContent = component.get('menuTitle')
+  })
+
+  /* ===== 子菜单删除时恢复父级链接 traits ===== */
+  editor.on('component:remove', (component) => {
+    // 子菜单项被删除 → 检查 el-menu-sub 是否为空
+    const parent = component.parent()
+    if (parent && parent.get('type') === 'el-menu-sub') {
+      const grandparent = parent.parent()
+      if (grandparent && grandparent.get('type') === 'el-menu-item') {
+        updateTraitsBasedOnSubmenu(grandparent)
+      }
+    }
+    // el-menu-sub 容器本身被删除
+    if (component.get('type') === 'el-menu-sub') {
+      const p = component.parent()
+      if (p && p.get('type') === 'el-menu-item') {
+        updateTraitsBasedOnSubmenu(p)
+      }
+    }
+  })
+
+  /* ===== 根据是否有子菜单切换父级 traits ===== */
+  function updateTraitsBasedOnSubmenu(item) {
+    if (!item || item.get('type') !== 'el-menu-item') return
+
+    const hasSubWithChildren = item.components().some(c => {
+      return c.get('type') === 'el-menu-sub' && c.components().length > 0
+    })
+
+    const current = item.get('traits')
+    if (!current || !Array.isArray(current)) return
+
+    if (hasSubWithChildren) {
+      // 有子菜单 → 移除 链接地址 和 跳转方式
+      const filtered = current.filter(t => t.name !== 'data-url' && t.name !== 'data-target')
+      item.set('traits', filtered)
+    } else {
+      // 无子菜单 → 补全 链接地址 和 跳转方式（如果缺少的话）
+      const hasUrl = current.some(t => t.name === 'data-url')
+      if (!hasUrl) {
+        item.set('traits', [
+          { type: 'button', label: '子菜单', text: '+ 新增子菜单', command: 'addSubmenuItem' },
+          { type: 'text', label: '菜单标题', name: 'menuTitle', changeProp: 1 },
+          { type: 'text', label: '链接地址', name: 'data-url', placeholder: 'https:// 或 /path' },
+          { type: 'select', label: '跳转方式', name: 'data-target', options: [
+            { value: '_self', name: '当前窗口' },
+            { value: '_blank', name: '新窗口' },
+          ]},
+        ])
+      }
+    }
+  }
+
+  /* ===== 点击空白处收起所有子菜单 ===== */
+  function closeExpandedMenus(exceptEl) {
+    const doc = editor.Canvas.getDocument()
+    if (!doc) return
+    doc.querySelectorAll('.el-menu-item.is-expanded').forEach((el) => {
+      if (exceptEl && el === exceptEl) return
+      el.classList.remove('is-expanded')
+    })
+  }
+
+  // canvas 就绪后绑定点击关闭
+  const tryAttach = () => {
+    const doc = editor.Canvas.getDocument()
+    if (!doc) { setTimeout(tryAttach, 200); return }
+    doc.addEventListener('click', (e) => {
+      if (!e.target.closest?.('.el-menu-item')) {
+        doc.querySelectorAll('.el-menu-item.is-expanded').forEach((el) => {
+          el.classList.remove('is-expanded')
+        })
+      }
+    })
+  }
+  tryAttach()
 }

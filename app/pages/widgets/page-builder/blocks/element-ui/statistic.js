@@ -23,15 +23,15 @@ export function getStatisticBlocks() {
       label: '统计组件',
       category: '数据展示',
       content: `<style>
-[data-gjs-type="el-statistic"]{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
-[data-gjs-type="el-statistic"] .el-stat-card{flex:1;background:#fff;border:1px solid ${C.border};border-radius:${C.radius};padding:${px(24)} ${px(20)};text-align:center;cursor:default;transition:transform .25s,box-shadow .25s}
-[data-gjs-type="el-statistic"] .el-stat-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,0.08)}
-[data-gjs-type="el-statistic"] .el-stat-label{font-size:${px(13)};color:${C.textTertiary};margin-bottom:${px(10)};letter-spacing:0.5px}
-[data-gjs-type="el-statistic"] .el-stat-value{font-size:${px(30)};font-weight:700;color:${C.text};line-height:1.2}
-[data-gjs-type="el-statistic"] .el-stat-trend{font-size:${px(12)};margin-top:${px(8)}}
-[data-gjs-type="el-statistic"] .el-stat-icon{font-size:${px(24)};margin-bottom:${px(8)};display:block}
+.el-stat-root{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
+.el-stat-root .el-stat-card{flex:1;background:#fff;border:1px solid ${C.border};border-radius:${C.radius};padding:${px(24)} ${px(20)};text-align:center;cursor:default;transition:transform .25s,box-shadow .25s}
+.el-stat-root .el-stat-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,0.08)}
+.el-stat-root .el-stat-label{font-size:${px(13)};color:${C.textTertiary};margin-bottom:${px(10)};letter-spacing:0.5px}
+.el-stat-root .el-stat-value{font-size:${px(30)};font-weight:700;color:${C.text};line-height:1.2}
+.el-stat-root .el-stat-trend{font-size:${px(12)};margin-top:${px(8)}}
+.el-stat-root .el-stat-icon{font-size:${px(24)};margin-bottom:${px(8)};display:block}
 </style>
-<div data-gjs-type="el-statistic" style="display:flex;flex-wrap:wrap;gap:${px(20)};">
+<div data-gjs-type="el-statistic" class="el-stat-root" style="display:flex;flex-wrap:wrap;gap:${px(20)};">
   <div class="el-stat-card">
     <span class="el-stat-icon">👥</span>
     <div class="el-stat-label">总用户数</div>

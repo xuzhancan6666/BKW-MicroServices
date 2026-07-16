@@ -24,12 +24,12 @@ export function getCardBlocks() {
       label: '卡片',
       category: '通用组件',
       content: `<style>
-[data-gjs-type="el-card"]{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
-[data-gjs-type="el-card"]{background:${C.bgWhite};border:1px solid ${C.borderLight};border-radius:${C.radius};overflow:hidden;transition:box-shadow .25s}
-[data-gjs-type="el-card"]:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1)}
-[data-gjs-type="el-card"] .el-card-img{width:100%;height:${px(180)};background:linear-gradient(135deg,#409eff60,#79bbff60);display:flex;align-items:center;justify-content:center;font-size:${px(32)};color:#fff;}
+.el-card{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
+.el-card{background:${C.bgWhite};border:1px solid ${C.borderLight};border-radius:${C.radius};overflow:hidden;transition:box-shadow .25s}
+.el-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+.el-card .el-card-img{width:100%;height:${px(180)};background:linear-gradient(135deg,#409eff60,#79bbff60);display:flex;align-items:center;justify-content:center;font-size:${px(32)};color:#fff;}
 </style>
-<div data-gjs-type="el-card" style="background:${C.bgWhite};border:1px solid ${C.borderLight};border-radius:${C.radius};box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;transition:box-shadow .25s;">
+<div data-gjs-type="el-card" class="el-card" style="background:${C.bgWhite};border:1px solid ${C.borderLight};border-radius:${C.radius};box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;transition:box-shadow .25s;">
   <div class="el-card-img">🏞️</div>
   <div style="padding:${px(20)};">
     <div style="font-size:${px(16)};font-weight:600;color:${C.text};margin-bottom:${px(8)};">卡片标题</div>

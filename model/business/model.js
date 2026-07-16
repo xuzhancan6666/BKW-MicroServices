@@ -1,6 +1,6 @@
 module.exports = {
    model: 'dashboard',
-   name: '电商',
+   name: 'business',
    menu: [{
       key: 'product',
       name: '商品管理',

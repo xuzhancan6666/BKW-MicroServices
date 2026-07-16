@@ -25,19 +25,19 @@ export function getTimelineBlocks() {
       label: '时间线',
       category: '数据展示',
       content: `<style>
-[data-gjs-type="el-timeline"]{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
-[data-gjs-type="el-timeline"] .el-tl-item{position:relative;padding-bottom:${px(28)};padding-left:${px(28)};}
-[data-gjs-type="el-timeline"] .el-tl-item:last-child{padding-bottom:0}
-[data-gjs-type="el-timeline"] .el-tl-line{position:absolute;left:${px(6)};top:${px(18)};bottom:${px(4)};width:2px;background:${C.borderLight};}
-[data-gjs-type="el-timeline"] .el-tl-item:last-child .el-tl-line{display:none}
-[data-gjs-type="el-timeline"] .el-tl-dot{position:absolute;left:0;top:${px(4)};width:${px(14)};height:${px(14)};border-radius:50%;border:2px solid;z-index:1;}
-[data-gjs-type="el-timeline"] .el-tl-content{padding:${px(2)} ${px(0)} ${px(4)} ${px(4)};border-radius:${C.radius};transition:background .15s;cursor:default}
-[data-gjs-type="el-timeline"] .el-tl-content:hover{background:#f5f7fa}
-[data-gjs-type="el-timeline"] .el-tl-time{font-size:${px(12)};color:${C.textTertiary};margin-bottom:${px(4)}}
-[data-gjs-type="el-timeline"] .el-tl-title{font-size:${px(14)};font-weight:600;color:${C.text}}
-[data-gjs-type="el-timeline"] .el-tl-desc{font-size:${px(13)};color:${C.textSecondary};margin-top:${px(4)};line-height:1.5}
+.el-tl-root{width:100%;font-family:"Microsoft YaHei","PingFang SC",sans-serif;box-sizing:border-box}
+.el-tl-root .el-tl-item{position:relative;padding-bottom:${px(28)};padding-left:${px(28)};}
+.el-tl-root .el-tl-item:last-child{padding-bottom:0}
+.el-tl-root .el-tl-line{position:absolute;left:${px(6)};top:${px(18)};bottom:${px(4)};width:2px;background:${C.borderLight};}
+.el-tl-root .el-tl-item:last-child .el-tl-line{display:none}
+.el-tl-root .el-tl-dot{position:absolute;left:0;top:${px(4)};width:${px(14)};height:${px(14)};border-radius:50%;border:2px solid;z-index:1;}
+.el-tl-root .el-tl-content{padding:${px(2)} ${px(0)} ${px(4)} ${px(4)};border-radius:${C.radius};transition:background .15s;cursor:default}
+.el-tl-root .el-tl-content:hover{background:#f5f7fa}
+.el-tl-root .el-tl-time{font-size:${px(12)};color:${C.textTertiary};margin-bottom:${px(4)}}
+.el-tl-root .el-tl-title{font-size:${px(14)};font-weight:600;color:${C.text}}
+.el-tl-root .el-tl-desc{font-size:${px(13)};color:${C.textSecondary};margin-top:${px(4)};line-height:1.5}
 </style>
-<div data-gjs-type="el-timeline" style="padding:${px(24)};background:${C.bgWhite};border-radius:${C.radius};">
+<div data-gjs-type="el-timeline" class="el-tl-root" style="padding:${px(24)};background:${C.bgWhite};border-radius:${C.radius};">
   <div class="el-tl-item">
     <div class="el-tl-dot" style="border-color:${C.primary};background:${C.primary};"></div>
     <div class="el-tl-line"></div>

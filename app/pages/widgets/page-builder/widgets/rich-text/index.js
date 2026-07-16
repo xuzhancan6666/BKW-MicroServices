@@ -56,6 +56,12 @@ export function useRichTextModal() {
         defaults: {
           name: '富文本',
           draggable: true,
+          resizable: {
+            keyWidth: 'width',
+            keyHeight: 'height',
+            handlers: ['se', 'e', 's', 'ne', 'nw', 'sw'],
+            min_dim: 20,
+          },
           style: { width: '100%' },
           traits: [
             {

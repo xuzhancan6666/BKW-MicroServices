@@ -80,6 +80,7 @@ const {
   onRichTextCancel,
 } = useRichTextModal()
 
+
 /* ========== Editor Initialization ========== */
 
 function initSetting() {
@@ -277,6 +278,28 @@ function stripComponentInstances(data) {
   }
 }
 
+/** 提取 canvas iframe head 中 block 自带的 class 级 <style> 规则 */
+function getCanvasHeadStyles() {
+  const canvasDoc = editor.Canvas.getDocument()
+  if (!canvasDoc) return ''
+  let result = ''
+  canvasDoc.querySelectorAll('head > style').forEach(s => {
+    const text = (s.textContent || '').trim()
+    // 排除 GrapesJS 内部样式（它们以 [data-gjs 开头）
+    if (text && !/^\[data-gjs/.test(text)) {
+      result += text + '\n'
+    }
+  })
+  return result
+}
+
+/** 拼接完整的 CSS：canvas head 样式 + CssComposer 样式 */
+function getMergedCss() {
+  const headCss = getCanvasHeadStyles()
+  const composerCss = editor.getCss() || ''
+  return headCss + '\n' + composerCss
+}
+
 /* ========== Save ========== */
 
 function handleSave() {
@@ -287,7 +310,7 @@ function handleSave() {
   stripComponentInstances(projectData)
 
   const html = editor.getHtml()
-  const fullCss = editor.getCss()
+  const fullCss = getMergedCss()
   console.log('html', html)
   console.log('fullCss', fullCss)
   // 组件：剥离 <body> 包裹 + 内联样式，确保内容独立完整
@@ -299,13 +322,10 @@ function handleSave() {
     inlined = inlineStyles(html, fullCss)
     inlined = wrapPcContainer(inlined)
   }
-  // ElementPlus blocks 使用属性选择器和 :hover 等伪类，inlineStyles 无法处理，
-  // 需额外保留 <style> 标签确保保存后交互样式完整
   if (fullCss) {
     inlined = '<style>\n' + fullCss + '\n</style>\n' + inlined
   }
   console.log('inlined..', inlined)
-  // return
   emit('save', {
     pageId: props.pageId,
     mode: 0,
@@ -320,7 +340,7 @@ function exportHtml() {
   if (!editor) return
   const fullHtml = buildExportHtml({
     html: editor.getHtml(),
-    css: editor.getCss(),
+    css: getMergedCss(),
     js: editor.getJs(),
     editorType: props.editorType,
   })
