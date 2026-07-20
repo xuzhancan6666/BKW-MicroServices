@@ -20,7 +20,8 @@ module.exports = (app) => {
    // 引入 ctx.request.body 参数解析中间件
    const bodyParser = require('koa-bodyparser')
    app.use(bodyParser({
-      formList: '1000mb',
+      formLimit: '100mb',
+      jsonLimit: '100mb',
       enableTypes: ['form', 'json', 'text']
    }))
 
