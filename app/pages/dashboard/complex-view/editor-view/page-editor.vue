@@ -5,13 +5,22 @@
       <span>加载中...</span>
     </div>
     <page-builder
-      v-else
+      v-else-if="pageMode !== 1 || editorType === 'component'"
       :key="pageId"
       ref="pageBuilderRef"
       :page-id="pageId"
       :init-data="pageData"
       :lang="'zh_HK'"
       :editor-type="editorType"
+      @save="handleSave"
+      @back="backToList"
+    />
+    <app-builder
+      v-else
+      :key="'app-'+pageId"
+      ref="pageBuilderRef"
+      :page-id="pageId"
+      :init-data="pageData"
       @save="handleSave"
       @back="backToList"
     />
@@ -23,6 +32,7 @@ import { ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import PageBuilder from '$widgets/page-builder/page-builder.vue'
+import AppBuilder from '$widgets/app-builder/app-builder.vue'
 import curl from '$common/curl.js'
 
 const route = useRoute()
@@ -35,6 +45,7 @@ const pageTitle = ref('')
 const pageDescription = ref('')
 const pageStatus = ref(0)
 const editorType = ref('page')
+const pageMode = ref(0)
 const pageBuilderRef = ref(null)
 
 async function loadPageContent(id) {
@@ -73,6 +84,7 @@ async function loadPageContent(id) {
   }
   console.log('loadPageContent: pageData parsed =', pageData.value ? 'NOT null' : 'null')
   editorType.value = res.data.type || 'page'
+  pageMode.value = res.data.mode !== undefined ? res.data.mode : 0
   pageTitle.value = res.data.title || ''
   pageDescription.value = res.data.description || ''
   pageStatus.value = res.data.status !== undefined ? res.data.status : 0
